@@ -9,107 +9,159 @@ const FONTS = {
   accent: "Zen Dots, cursive",
 };
 
-// --- Data: Mock Resume ---
+// ---Resume ---
 const EXPERIENCES = [
   {
     id: 1,
-    role: "Regulatory Engineer",
-    company: "PLANET LABS",
-    period: "2025 - Present",
-    description: "Leading regulatory compliance for next-generation satellite constellations. Interfacing with global spectrum agencies to secure downlink frequencies.",
+    role: "Regulatory Engineer (Satellite Spectrum)",
+    company: "PLANET",
+    period: "Aug 2025 – Present",
+    description: `• Prepare and submit domestic and international satellite and ground-station filings (FCC, ITU, NOAA, and other regulators).
+• Lead or support spectrum coordination with government and commercial users.
+• Run interference and compatibility studies using STK and related tools to support licensing and coordination.
+• Work with space systems, ground, launch, and legal teams to gather technical inputs and maintain license compliance.
+• Track regulatory changes and assess impact on operations and future missions.`,
     skills: [
-      { name: "Spectrum Analysis", type: "technical-hardware" },
+      { name: "Spectrum Licensing", type: "technical-hardware" },
+      { name: "STK", type: "technical-software" },
+      { name: "FCC / ITU Filings", type: "technical-hardware" },
       { name: "Python", type: "technical-software" },
-      { name: "Negotiation", type: "soft" },
-      { name: "FCC Compliance", type: "technical-hardware" }
+      { name: "Cross-functional Collaboration", type: "soft" }
     ]
   },
   {
     id: 2,
-    role: "Avionics Systems Lead",
-    company: "ORBITAL DYNAMICS",
-    period: "2023 - 2025",
-    description: "Designed redundant flight control systems for sub-orbital launch vehicles. Managed a team of 5 engineers through the full lifecycle from prototype to launch.",
+    role: "Space and Ground Operations Engineer",
+    company: "BLUE ORIGIN",
+    period: "Aug 2022 – Aug 2025",
+    description:
+      "Made sure rockets, radios, and ground software all behaved, from licensing paperwork to console operations.",
     skills: [
-      { name: "Embedded C++", type: "technical-software" },
-      { name: "PCB Design", type: "technical-hardware" },
-      { name: "Team Leadership", type: "soft" },
-      { name: "Altium", type: "technical-hardware" }
-    ]
-  },
-  {
-    id: 3,
-    role: "Junior Software Engineer",
-    company: "TESLA",
-    period: "2021 - 2023",
-    description: "Contributed to the Autopilot visualization stack. Optimized rendering pipelines for real-time object detection display.",
-    skills: [
-      { name: "React", type: "technical-software" },
-      { name: "WebGL", type: "technical-software" },
-      { name: "Agile", type: "soft" }
-    ]
-  },
-  {
-    id: 4,
-    role: "Research Assistant",
-    company: "MIT MEDIA LAB",
-    period: "2020 - 2021",
-    description: "Researched human-computer interaction paradigms for spatial computing. Published papers on haptic feedback in VR environments.",
-    skills: [
-      { name: "Unity 3D", type: "technical-software" },
-      { name: "Prototyping", type: "technical-hardware" },
-      { name: "Technical Writing", type: "soft" }
-    ]
-  },
-  {
-    id: 5,
-    role: "Engineering Intern",
-    company: "SPACEX",
-    period: "2018 - 2019",
-    description: "Completed multiple rotations within the vehicle engineering teams. Contributed to critical testing and structural analysis projects.",
-    skills: [
-      { name: "Communication", type: "soft" },
-      { name: "Problem Solving", type: "soft" }
+      { name: "Spectrum & Licensing", type: "technical-hardware" },
+      { name: "Mission Operations", type: "technical-hardware" },
+      { name: "Ground Data Systems", type: "technical-hardware" },
+      { name: "AWS (EKS, Docker, K8s)", type: "technical-software" },
+      { name: "Grafana / OpenC3", type: "technical-software" }
     ],
-    // SUB-EXPERIENCES for the dropdown
     subExperiences: [
       {
-        id: "5a",
-        role: "Propulsion Intern",
-        company: "SPACEX",
-        period: "Summer 2019",
-        description: "Assisted in the propulsion testing facility. Analyzed sensor data to predict engine anomalies and optimized test stand workflows.",
+        id: "2a",
+        role: "Flight Operations Engineer",
+        company: "BLUE ORIGIN",
+        period: "Aug 2024 – Aug 2025",
+        description: `• Led spectrum and operational licensing inputs for missions, coordinating with FCC, ITU, NTIA, NASA, DoD, and NOAA.
+• Served and Trained as Ground Control Operator for New Glenn’s first flight with the Blue Ring Payload.
+• Co‑designed an AI‑powered ops workflow, defining end‑to‑end architecture, agent interactions, and data‑flow schemas that embedded LLM toolchains into our ground system and reduced routine data‑validation tasks and accelerated mission tooling development. 
+• Wrote, tested, and executed  procedural documentation to be used to command and receive vehicle telemetry.
+• Worked with ground software teams to add simple LLM-assisted checks and automation into existing workflows.`,
         skills: [
-          { name: "Data Analysis", type: "technical-software" },
-          { name: "Matlab", type: "technical-software" }
+          { name: "Spectrum Coordination", type: "technical-hardware" },
+          { name: "Regulatory Licensing", type: "technical-hardware" },
+          { name: "Mission Operation", type: "technical-hardware" },
+          { name: "Python", type: "technical-software" },
+          { name: "Cross-team Communication", type: "soft" }
         ]
       },
       {
-        id: "5b",
-        role: "Structures Intern",
-        company: "SPACEX",
-        period: "Fall 2018",
-        description: "Supported static load testing for Falcon 9 interstage components. Designed custom fixtures for vibration testing.",
+        id: "2b",
+        role: "Ground Data Systems Engineer",
+        company: "BLUE ORIGIN",
+        period: "Aug 2022 – Aug 2024",
+        description: `• Built and maintained Grafana/OpenC3 dashboards showing real-time state of vehicle telemetry and ground systems.
+• Supported AWS-based ground software (EKS, Docker, Kubernetes) across development, test, and flight environments.
+• Performed STK coverage analysis and coordinated with ground-station vendors on configuration and operations plans.`,
         skills: [
-          { name: "FEA Analysis", type: "technical-software" },
-          { name: "SolidWorks", type: "technical-software" },
-          { name: "Machining", type: "technical-hardware" }
+          { name: "Grafana / OpenC3", type: "technical-software" },
+          { name: "UI/UX", type: "technical-software" },
+          { name: "HCI", type: "technical-hardware" },
+          { name: "Ansys STK/MATLAB", type: "technical-software" },
+          { name: "Vendor Coordination", type: "soft" }
         ]
       }
     ]
   },
   {
-    id: 6,
-    role: "Freelance Developer",
-    company: "SELF",
-    period: "2018 - 2020",
-    description: "Built custom web solutions for local businesses and non-profits. Handled full-stack development and client management.",
+    id: 3,
+    role: "Engineering Intern (Multiple Roles)",
+    company: "NASA JOHNSON SPACE CENTER",
+    period: "Aug 2020 – May 2022",
+    description:
+      "Rotated across human research, systems engineering, human factors, and flight operations for HRP, Orion, Starliner, and exploration missions.",
     skills: [
-      { name: "JavaScript", type: "technical-software" },
-      { name: "Project Management", type: "soft" }
+      { name: "Python", type: "technical-software" },
+      { name: "Systems Engineering", type: "technical-hardware" },
+      { name: "Human Factors", type: "technical-hardware" },
+      { name: "Mission Operations", type: "technical-hardware" },
+      { name: "Technical Communication", type: "soft" }
+    ],
+    subExperiences: [
+      {
+        id: "3a",
+        role: "Human Research Program Data Scientist (Intern)",
+        company: "NASA JSC",
+        period: "Jan 2022 – May 2022",
+        description: `• Built a Neo4j evidence database to represent findings in the Human Research Program Evidence Handbook.
+• Wrote Python and NLP scripts to generate text “heat maps” and show relationships between evidence domains.`,
+        skills: [
+          { name: "Neo4j", type: "technical-software" },
+          { name: "Python", type: "technical-software" },
+          { name: "NLP", type: "technical-software" }
+        ]
+      },
+      {
+        id: "3b",
+        role: "Systems Engineer (Intern)",
+        company: "NASA JSC",
+        period: "Aug 2021 – Dec 2021",
+        description: `• Assessed automated landing capabilities for Human Landing System concepts using Apollo and Shuttle heritage data.
+• Worked with subsystem, safety, and mission assurance teams to capture constraints and risks.`,
+        skills: [
+          { name: "Requirements Analysis", type: "technical-hardware" },
+          { name: "Trade Studies", type: "technical-hardware" }
+        ]
+      },
+      {
+        id: "3c",
+        role: "Human Factors Engineer (Intern)",
+        company: "NASA JSC",
+        period: "May 2021 – Aug 2021",
+        description: `• Supported EVA operations concepts and science objectives for lunar, and deep-space habitat designs.
+• Ran human-in-the-loop tests with astronaut subjects to evaluate tools for Orion–ISS docking.`,
+        skills: [
+          { name: "Human-in-the-loop Testing", type: "technical-hardware" },
+          { name: "Prototyping", type: "technical-hardware" }
+        ]
+      },
+      {
+        id: "3d",
+        role: "Flight Operations Engineer (Intern)",
+        company: "NASA JSC",
+        period: "Aug 2020 – May 2021",
+        description: `• Tested and verified ground displays and UIs for uncrewed and crewed Boeing Starliner missions.
+• Used object-based data models and process flow diagrams to align mission operations architecture with controller procedures.`,
+        skills: [
+          { name: "Mission Display Development", type: "technical-hardware" },
+          { name: "Ops Procedures Writing", type: "technical-hardware" }
+        ]
+      }
+    ]
+  },
+  {
+    id: 4,
+    role: "Delivery Experience Specialist",
+    company: "TESLA",
+    period: "Dec 2018 – Oct 2019; Mar 2020",
+    description: `• Guided customers through vehicle software features, controls, and basic maintenance at delivery.
+• Coordinated financing terms and delivery paperwork, tracking status in Salesforce.
+• Inspected, prepared, and staged vehicles before hand-off, resolving straightforward issues and ensuring charge levels.`,
+    skills: [
+      { name: "Customer Communication", type: "soft" },
+      { name: "Process Coordination", type: "soft" },
+      { name: "Salesforce", type: "technical-software" }
     ]
   }
 ];
+
 
 // --- Helper Logic for Three.js Waves (Welcome Screen) ---
 
@@ -1182,4 +1234,5 @@ export default function App() {
       `}</style>
     </div>
   );
+
 }
