@@ -2,7 +2,7 @@ name: Deploy Vite site to GitHub Pages
 
 on:
   push:
-    branches: ['main']  # or your default branch
+    branches: ['main']   
   workflow_dispatch:
 
 permissions:
@@ -28,12 +28,11 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
-          cache: 'npm'
+          node-version: 'lts/*'   
 
       - name: Install dependencies
         working-directory: TK_Uni
-        run: npm ci
+        run: npm install
 
       - name: Build
         working-directory: TK_Uni
@@ -45,7 +44,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # dist folder inside TK_Uni
+          # Vite builds into TK_Uni/dist
           path: 'TK_Uni/dist'
 
       - name: Deploy to GitHub Pages
