@@ -9,7 +9,7 @@ const FONTS = {
   accent: "Zen Dots, cursive",
 };
 
-// ---Resume ---
+// --- Data: Resume (Updated) ---
 const EXPERIENCES = [
   {
     id: 1,
@@ -162,6 +162,38 @@ const EXPERIENCES = [
   }
 ];
 
+// --- Helper Components ---
+
+// Helper to render description text as bullet points if appropriate
+const DescriptionRenderer = ({ text, isDarkMode, accentHex }) => {
+  if (!text) return null;
+
+  // Check if text contains bullet points
+  if (text.includes('•')) {
+    const items = text.split('•').map(item => item.trim()).filter(item => item.length > 0);
+    return (
+      <ul className="list-none space-y-2 mb-6">
+        {items.map((item, index) => (
+          <li key={index} className={`flex items-start leading-relaxed ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>
+            {/* Custom bullet that mirrors nav/timeline style */}
+            <span 
+              className="mr-3 mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0 opacity-80" 
+              style={{ backgroundColor: accentHex }} 
+            />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  // Fallback for standard paragraphs
+  return (
+    <p className={`mb-6 leading-relaxed ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>
+      {text}
+    </p>
+  );
+};
 
 // --- Helper Logic for Three.js Waves (Welcome Screen) ---
 
@@ -273,97 +305,225 @@ const createEssentialField = (sources, time, color) => {
 
 // --- Components ---
 
-// 1. The 3D Background Component (Welcome Screen)
-const CreativeActPortal = ({ initialZoom = 8, isDarkMode, zoomActive }) => {
-  const containerRef = useRef(null);
+// 1. Glowing Eye Animation (Welcome Screen)
+const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
+  const canvasRef = useRef(null);
+  const animationFrameRef = useRef(null);
+  const expansionRef = useRef(0); // Track expansion for the "reverse" transition
 
   useEffect(() => {
-    if (!containerRef.current) return;
-
-    const container = containerRef.current;
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setSize(width, height);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     
-    // Theme specific background color
-    const bgColor = isDarkMode ? 0x1a1a1a : 0xf0f0e8;
-    renderer.setClearColor(bgColor);
+    const ctx = canvas.getContext('2d');
     
-    container.appendChild(renderer.domElement);
-
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
-    scene.add(ambientLight);
-
-    camera.position.set(0, 4, initialZoom);
-    camera.lookAt(0, 0, 0);
-
-    const mainGroup = new THREE.Group();
-    scene.add(mainGroup);
-
-    let animationFrameId;
-    let time = 0;
-    let fieldGroup = null;
-
-    const lineColor = isDarkMode ? 0xaaaaaa : 0x1a1a1a;
-
-    const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
-      time += 0.008;
-
-      if (fieldGroup) {
-        fieldGroup.children.forEach((child) => {
-          if (child.geometry) child.geometry.dispose();
-          if (child.material) {
-            if (Array.isArray(child.material)) child.material.forEach(m => m.dispose());
-            else child.material.dispose();
-          }
-        });
-        mainGroup.remove(fieldGroup);
-      }
-
-      const sources = createMinimalWaves(time);
-      fieldGroup = createEssentialField(sources, time, lineColor);
-      mainGroup.add(fieldGroup);
-
-      mainGroup.rotation.y = Math.sin(time * 0.15) * 0.1;
-      mainGroup.rotation.x = Math.cos(time * 0.12) * 0.05;
-
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
+    // Full screen handling
     const handleResize = () => {
-      if (!containerRef.current) return;
-      const newWidth = containerRef.current.clientWidth;
-      const newHeight = containerRef.current.clientHeight;
-      camera.aspect = newWidth / newHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(newWidth, newHeight);
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
-
     window.addEventListener('resize', handleResize);
+    handleResize();
 
+    let width = canvas.width;
+    let height = canvas.height;
+    let centerX = width / 2;
+    let centerY = height / 2;
+    // Adjust radius based on screen size
+    let radius = Math.min(width, height) * 0.35;
+    
+    const PARTICLE_COUNT = 8000; // Adjusted for performance/full screen
+    const particles = [];
+    
+    // Initialize particles based on provided logic
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const side = i < PARTICLE_COUNT / 2 ? 'dark' : 'light';
+      const angle = Math.random() * Math.PI * 2;
+      const r = Math.sqrt(Math.random()) * radius;
+      
+      let initialAngle = angle;
+      if (side === 'dark') {
+        initialAngle = angle < Math.PI ? angle : angle - Math.PI;
+      } else {
+        initialAngle = angle >= Math.PI ? angle : angle + Math.PI;
+      }
+      
+      const x = centerX + Math.cos(initialAngle) * r;
+      const y = centerY + Math.sin(initialAngle) * r;
+      
+      particles.push({
+        x: x,
+        y: y,
+        side: side,
+        initialAngle: initialAngle,
+        initialRadius: r,
+        convergencePhase: Math.random() * Math.PI * 2,
+        convergenceSpeed: 0.005 + Math.random() * 0.005,
+        size: 0.3 + Math.random() * 0.4,
+        targetX: x,
+        targetY: y,
+        transitionPhase: 0,
+        transitionSpeed: 0.004 + Math.random() * 0.002
+      });
+    }
+    
+    let time = 0;
+    let lastTime = 0;
+    const FPS = 30; // Smoother FPS
+    const frameDelay = 1000 / FPS;
+    
+    function animate(currentTime) {
+      // Update dimensions in loop in case of resize
+      width = canvas.width;
+      height = canvas.height;
+      centerX = width / 2;
+      centerY = height / 2;
+      radius = Math.min(width, height) * 0.35;
+
+      if (!lastTime) lastTime = currentTime;
+      const elapsed = currentTime - lastTime;
+      
+      animationFrameRef.current = requestAnimationFrame(animate);
+
+      if (elapsed > frameDelay) {
+        time += 0.008;
+        lastTime = currentTime;
+        
+        // Handle Transition: "Reverse" = Expansion
+        if (zoomActive) {
+            expansionRef.current += 0.5; // Speed of expansion
+        } else {
+            expansionRef.current = Math.max(0, expansionRef.current - 0.5);
+        }
+
+        // Clear with trails - Theme Aware
+        const trailColor = isDarkMode ? 'rgba(26, 26, 26, 0.1)' : 'rgba(240, 238, 230, 0.1)';
+        ctx.fillStyle = trailColor;
+        ctx.fillRect(0, 0, width, height);
+      
+        particles.forEach(particle => {
+          particle.convergencePhase += particle.convergenceSpeed;
+          particle.transitionPhase += particle.transitionSpeed;
+          
+          const convergenceCycle = Math.sin(particle.convergencePhase);
+          const isConverging = convergenceCycle > 0;
+          
+          // Apply base animation logic
+          if (isConverging) {
+            const convergenceStrength = convergenceCycle;
+            particle.targetX = centerX;
+            particle.targetY = centerY;
+            
+            const distanceToCenter = Math.sqrt(
+              (particle.x - centerX) ** 2 + 
+              (particle.y - centerY) ** 2
+            );
+            // Prevent division by zero
+            const safeRadius = radius || 1;
+            const moveSpeed = 0.02 * convergenceStrength * (distanceToCenter / safeRadius);
+            
+            particle.x += (particle.targetX - particle.x) * moveSpeed;
+            particle.y += (particle.targetY - particle.y) * moveSpeed;
+          } else {
+            const transitionProgress = Math.abs(convergenceCycle);
+            let newAngle, newRadius;
+            
+            if (particle.side === 'dark') {
+              newAngle = particle.initialAngle + Math.PI;
+              newRadius = particle.initialRadius;
+            } else {
+              newAngle = particle.initialAngle + Math.PI;
+              newRadius = particle.initialRadius;
+            }
+            
+            const sCurveEffect = Math.sin(newAngle * 2) * radius * 0.5;
+            const curvedAngle = newAngle + (sCurveEffect / newRadius) * transitionProgress;
+            
+            particle.targetX = centerX + Math.cos(curvedAngle) * newRadius;
+            particle.targetY = centerY + Math.sin(curvedAngle) * newRadius;
+            
+            const moveSpeed = 0.03 * transitionProgress;
+            particle.x += (particle.targetX - particle.x) * moveSpeed;
+            particle.y += (particle.targetY - particle.y) * moveSpeed;
+          }
+
+          // APPLY TRANSITION: Force Outward Expansion
+          if (expansionRef.current > 0) {
+             const dx = particle.x - centerX;
+             const dy = particle.y - centerY;
+             const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+             // Move away from center exponentially based on expansionRef
+             const expansionForce = expansionRef.current * 2; 
+             particle.x += (dx / dist) * expansionForce;
+             particle.y += (dy / dist) * expansionForce;
+          }
+          
+          // Determine color based on position
+          const dx = particle.x - centerX;
+          const dy = particle.y - centerY;
+          const particleAngle = Math.atan2(dy, dx);
+          const normalizedAngle = (particleAngle + Math.PI * 2) % (Math.PI * 2);
+          
+          let color, alpha;
+          
+          // Theme Aware Particle Colors
+          if (isConverging) {
+            if (isDarkMode) {
+               color = particle.side === 'dark' ? '100, 100, 100' : '200, 200, 200';
+            } else {
+               color = particle.side === 'dark' ? '20, 20, 20' : '90, 90, 90';
+            }
+            alpha = 0.3 * convergenceCycle;
+          } else {
+            const transition = Math.abs(convergenceCycle);
+            if (isDarkMode) {
+                // Invert logic for dark mode visibility
+                const val = particle.side === 'dark' 
+                    ? 100 + transition * 100 
+                    : 200 - transition * 100;
+                color = `${val}, ${val}, ${val}`;
+            } else {
+                if (particle.side === 'dark') {
+                    color = `${20 + transition * 70}, ${20 + transition * 70}, ${20 + transition * 70}`;
+                } else {
+                    color = `${90 - transition * 70}, ${90 - transition * 70}, ${90 - transition * 70}`;
+                }
+            }
+            alpha = 0.3 * transition;
+          }
+          
+          // Draw particle
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${color}, ${alpha})`;
+          ctx.fill();
+        });
+        
+        // Draw central convergence point
+        const centralGlow = Math.sin(time * 0.1) * 0.5 + 0.5;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 2 + centralGlow * 3, 0, Math.PI * 2);
+        const centerColor = isDarkMode ? '200, 200, 200' : '51, 51, 51';
+        ctx.fillStyle = `rgba(${centerColor}, ${0.1 + centralGlow * 0.2})`;
+        ctx.fill();
+      }
+    }
+    
+    animate(0);
+    
     return () => {
       window.removeEventListener('resize', handleResize);
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      renderer.dispose();
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [initialZoom, isDarkMode]);
-
+  }, [isDarkMode, zoomActive]); // Re-run if theme changes
+  
   return (
-    <div
-      ref={containerRef}
-      className={`absolute inset-0 -z-10 transition-opacity duration-1000 ${zoomActive ? 'opacity-0' : 'opacity-100'}`}
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 -z-10"
+      style={{ display: 'block' }}
     />
   );
 };
@@ -926,7 +1086,7 @@ export default function App() {
     setZoomActive(true);
     setTimeout(() => {
       setEntered(true);
-    }, 800); 
+    }, 1500); 
   };
 
   const toggleExperience = (id) => {
@@ -955,11 +1115,13 @@ export default function App() {
       {/* --- Entry View --- */}
       {!entered && (
         <motion.div 
-          className="absolute inset-0 flex flex-col items-center justify-center z-40 overflow-hidden"
-          animate={zoomActive ? { scale: 5, opacity: 0 } : { scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+          onClick={handleEnter}
+          className="absolute inset-0 flex flex-col items-center justify-center z-40 overflow-hidden cursor-pointer"
+          // Transition Logic: Dissolve text
+          animate={zoomActive ? { opacity: 0 } : { opacity: 1 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
         >
-          <CreativeActPortal isDarkMode={isDarkMode} zoomActive={zoomActive} />
+          <GlowingEyeParticles isDarkMode={isDarkMode} zoomActive={zoomActive} />
 
           <div className="relative z-10 text-center pointer-events-none">
             <motion.h1 
@@ -980,16 +1142,15 @@ export default function App() {
             </motion.p>
           </div>
 
-          <motion.button
-            onClick={handleEnter}
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
-            className={`absolute bottom-32 md:bottom-24 text-sm md:text-base hover:scale-110 transition-transform cursor-pointer pointer-events-auto ${isDarkMode ? 'text-gray-500 hover:text-white' : 'text-gray-400 hover:text-black'}`}
+            className={`absolute bottom-32 md:bottom-24 text-sm md:text-base hover:scale-110 transition-transform ${isDarkMode ? 'text-gray-500 hover:text-white' : 'text-gray-400 hover:text-black'}`}
             style={{ fontFamily: FONTS.accent }}
           >
-            [click to enter]
-          </motion.button>
+            [tap anywhere]
+          </motion.div>
         </motion.div>
       )}
 
@@ -998,7 +1159,7 @@ export default function App() {
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 2, delay: 0.5 }} // Slow fade in after entry dissolves
           className="relative z-30 h-full flex flex-col max-w-5xl mx-auto px-4 md:px-8"
         >
           {/* Navigation */}
@@ -1084,9 +1245,8 @@ export default function App() {
                              </div>
                            </div>
 
-                           <p className={`mb-6 leading-relaxed ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>
-                             {job.description}
-                           </p>
+                           {/* DESCRIPTION RENDERER */}
+                           <DescriptionRenderer text={job.description} isDarkMode={isDarkMode} accentHex={accentHex} />
 
                            {/* Main Skills */}
                            <div className="flex flex-wrap gap-2 mb-4">
@@ -1122,9 +1282,8 @@ export default function App() {
                                          <span className={`font-mono text-xs ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>{subJob.period}</span>
                                        </div>
                                        
-                                       <p className={`text-sm mb-3 leading-relaxed ${isDarkMode ? 'text-stone-400' : 'text-stone-600'}`}>
-                                         {subJob.description}
-                                       </p>
+                                       {/* SUB DESCRIPTION RENDERER */}
+                                       <DescriptionRenderer text={subJob.description} isDarkMode={isDarkMode} accentHex={accentHex} />
                                        
                                        <div className="flex flex-wrap gap-2">
                                          {subJob.skills.map((skill, idx) => (
@@ -1234,5 +1393,4 @@ export default function App() {
       `}</style>
     </div>
   );
-
 }
