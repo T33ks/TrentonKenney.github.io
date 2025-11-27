@@ -1235,12 +1235,27 @@ export default function App() {
                                </div>
                                {/* Toggle Button for Nested Experiences */}
                                {job.subExperiences && (
-                                 <button
+                                 <motion.button
                                    onClick={() => toggleExperience(job.id)}
                                    className={`p-1 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10 text-stone-400' : 'hover:bg-black/5 text-stone-500'}`}
+                                   // Only animate if collapsed
+                                   animate={expandedExperience !== job.id ? {
+                                     boxShadow: [
+                                       `0 0 0px ${isDarkMode ? 'rgba(242, 211, 153, 0)' : 'rgba(64, 56, 42, 0)'}`,
+                                       `0 0 15px ${isDarkMode ? 'rgba(242, 211, 153, 0.6)' : 'rgba(64, 56, 42, 0.4)'}`, // Peak glow
+                                       `0 0 0px ${isDarkMode ? 'rgba(242, 211, 153, 0)' : 'rgba(64, 56, 42, 0)'}`
+                                     ]
+                                   } : {
+                                     boxShadow: '0 0 0px rgba(0,0,0,0)'
+                                   }}
+                                   transition={{
+                                     duration: 2,
+                                     repeat: Infinity,
+                                     ease: "easeInOut"
+                                   }}
                                  >
                                    {expandedExperience === job.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                                 </button>
+                                 </motion.button>
                                )}
                              </div>
                            </div>
