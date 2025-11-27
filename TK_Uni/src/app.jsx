@@ -1249,7 +1249,7 @@ export default function App() {
                                      boxShadow: '0 0 0px rgba(0,0,0,0)'
                                    }}
                                    transition={{
-                                     duration: 2,
+                                     duration: 4,
                                      repeat: Infinity,
                                      ease: "easeInOut"
                                    }}
@@ -1409,3 +1409,4 @@ export default function App() {
     </div>
   );
 }
+
