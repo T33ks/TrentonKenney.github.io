@@ -17,6 +17,7 @@ const EXPERIENCES = [
     company: "PLANET",
     period: "Aug 2025 – Present",
     description: `Develop and deliver domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.
+
 • Leading and supporting spectrum coordination with government and commercial users.
 • Building domain specific tools to support licensing and coordination efforts.
 • Managing and tracking regulatory changes to assess impact on operations and future missions.`,
@@ -98,7 +99,7 @@ const EXPERIENCES = [
         skills: [
           { name: "Neo4j", type: "technical-software" },
           { name: "Python", type: "technical-software" },
-          { name: "NLP", type: "technical-software" }
+          { name: "Data Science", type: "technical-software" }
         ]
       },
       {
@@ -1236,6 +1237,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
