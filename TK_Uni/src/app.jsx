@@ -16,7 +16,7 @@ const EXPERIENCES = [
     role: "Regulatory Engineer",
     company: "PLANET",
     period: "Aug 2025 – Present",
-    description: `Develop and deliver domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.
+    description: `Develop and deliver domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.",
 
 • Leading and supporting spectrum coordination with government and commercial users.
 • Building domain specific tools to support licensing and coordination efforts.
@@ -35,7 +35,7 @@ const EXPERIENCES = [
     company: "BLUE ORIGIN",
     period: "Aug 2022 – Aug 2025",
     description:
-      "Contributed to novel mission operations by developing ground-segment capabilities, supporting satellite flight operations, and managing regulatory licensing while refining operator interfaces and creating AI-driven tools to enhance operational performance.
+      "Contributed to novel mission operations by developing ground-segment capabilities, supporting satellite flight operations, and managing regulatory licensing while refining operator interfaces and creating AI-driven tools to enhance operational performance.".
       { name: "", type: "technical-hardware" },
       { name: "Mission Operations", type: "technical-hardware" },
       { name: "Systems Engineering", type: "technical-hardware" },
@@ -52,7 +52,7 @@ const EXPERIENCES = [
 • Served and Trained as Ground Control Operator for New Glenn’s first flight with the Blue Ring Payload.
 • Co‑designed an AI‑powered ops workflow, defining end‑to‑end architecture, agent interactions, and data‑flow schemas that embedded LLM toolchains into our ground system and reduced routine data‑validation tasks and accelerated mission tooling development. 
 • Wrote, tested, and executed  procedural documentation to be used to command and receive vehicle telemetry.
-• Worked with ground software teams to add simple LLM-assisted checks and automation into existing workflows.`,
+• Architected a novel AI ground software platform to be automated into existing workflows.`,
         skills: [
           { name: "Spectrum Coordination", type: "technical-hardware" },
           { name: "AI R&D", type: "technical-hardware" },
@@ -1240,3 +1240,4 @@ export default function App() {
     </div>
   );
 }
+
