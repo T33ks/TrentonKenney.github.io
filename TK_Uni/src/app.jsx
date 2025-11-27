@@ -16,8 +16,7 @@ const EXPERIENCES = [
     role: "Regulatory Engineer",
     company: "PLANET",
     period: "Aug 2025 – Present",
-    description: `Develop and deliver domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.",
-
+    description: `Develop and deliver domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.
 • Leading and supporting spectrum coordination with government and commercial users.
 • Building domain specific tools to support licensing and coordination efforts.
 • Managing and tracking regulatory changes to assess impact on operations and future missions.`,
@@ -34,8 +33,8 @@ const EXPERIENCES = [
     role: "Space and Ground Operations Engineer",
     company: "BLUE ORIGIN",
     period: "Aug 2022 – Aug 2025",
-    description:
-      "Contributed to novel mission operations by developing ground-segment capabilities, supporting satellite flight operations, and managing regulatory licensing while refining operator interfaces and creating AI-driven tools to enhance operational performance.".
+    description: `Contributed to novel mission operations by developing ground-segment capabilities, supporting satellite flight operations, and managing regulatory licensing while refining operator interfaces and creating AI-driven tools to enhance operational performance.`,
+    skills: [
       { name: "", type: "technical-hardware" },
       { name: "Mission Operations", type: "technical-hardware" },
       { name: "Systems Engineering", type: "technical-hardware" },
@@ -82,8 +81,7 @@ const EXPERIENCES = [
     role: "Engineering Intern (Multiple Roles)",
     company: "NASA JOHNSON SPACE CENTER",
     period: "Aug 2020 – May 2022",
-    description:
-      "Rotated across human factors research, systems engineering, and flight operations for HRP, Orion, Starliner, and Lunar exploration missions.",
+    description: "Rotated across human factors research, systems engineering, and flight operations for HRP, Orion, Starliner, and Lunar exploration missions.",
     skills: [
       { name: "Python", type: "technical-software" },
       { name: "Data Science", type: "technical-hardware" },
@@ -1240,4 +1238,5 @@ export default function App() {
     </div>
   );
 }
+
 
