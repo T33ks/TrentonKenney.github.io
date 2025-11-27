@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Mail, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sun, Moon, ChevronDown, ChevronUp } from 'lucide-react';
 import * as THREE from 'three';
 
 // --- Fonts & Global Styles Setup ---
@@ -13,16 +13,16 @@ const FONTS = {
 const EXPERIENCES = [
   {
     id: 1,
-    role: "Regulatory Engineer (Satellite Spectrum)",
+    role: "Regulatory Engineer",
     company: "PLANET",
     period: "Aug 2025 – Present",
-    description: `• Prepare and submit domestic and international satellite and ground-station filings (FCC, ITU, NOAA, and other regulators).
-• Lead or support spectrum coordination with government and commercial users.
-• Run interference and compatibility studies using STK and related tools to support licensing and coordination.
-• Work with space systems, ground, launch, and legal teams to gather technical inputs and maintain license compliance.
-• Track regulatory changes and assess impact on operations and future missions.`,
+    description: `Develop and deliver domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.
+
+• Leading and supporting spectrum coordination with government and commercial users.
+• Building domain specific tools to support licensing and coordination efforts.
+• Managing and tracking regulatory changes to assess impact on operations and future missions.`,
     skills: [
-      { name: "Spectrum Licensing", type: "technical-hardware" },
+      { name: "Satellite Regulations", type: "technical-hardware" },
       { name: "STK", type: "technical-software" },
       { name: "FCC / ITU Filings", type: "technical-hardware" },
       { name: "Python", type: "technical-software" },
@@ -35,13 +35,12 @@ const EXPERIENCES = [
     company: "BLUE ORIGIN",
     period: "Aug 2022 – Aug 2025",
     description:
-      "Made sure rockets, radios, and ground software all behaved, from licensing paperwork to console operations.",
-    skills: [
-      { name: "Spectrum & Licensing", type: "technical-hardware" },
+      "Contributed to novel mission operations by developing ground-segment capabilities, supporting satellite flight operations, and managing regulatory licensing while refining operator interfaces and creating AI-driven tools to enhance operational performance.
+      { name: "", type: "technical-hardware" },
       { name: "Mission Operations", type: "technical-hardware" },
-      { name: "Ground Data Systems", type: "technical-hardware" },
+      { name: "Systems Engineering", type: "technical-hardware" },
       { name: "AWS (EKS, Docker, K8s)", type: "technical-software" },
-      { name: "Grafana / OpenC3", type: "technical-software" }
+      { name: "Grafana / OpenC3 / Figma", type: "technical-software" }
     ],
     subExperiences: [
       {
@@ -56,9 +55,8 @@ const EXPERIENCES = [
 • Worked with ground software teams to add simple LLM-assisted checks and automation into existing workflows.`,
         skills: [
           { name: "Spectrum Coordination", type: "technical-hardware" },
-          { name: "Regulatory Licensing", type: "technical-hardware" },
-          { name: "Mission Operation", type: "technical-hardware" },
-          { name: "Python", type: "technical-software" },
+          { name: "AI R&D", type: "technical-hardware" },
+          { name: "Software Developement", type: "technical-software" },
           { name: "Cross-team Communication", type: "soft" }
         ]
       },
@@ -71,9 +69,8 @@ const EXPERIENCES = [
 • Supported AWS-based ground software (EKS, Docker, Kubernetes) across development, test, and flight environments.
 • Performed STK coverage analysis and coordinated with ground-station vendors on configuration and operations plans.`,
         skills: [
-          { name: "Grafana / OpenC3", type: "technical-software" },
-          { name: "UI/UX", type: "technical-software" },
-          { name: "HCI", type: "technical-hardware" },
+          { name: "Python", type: "technical-hardware" },
+          { name: "Data Visualization", type: "technical-software" },
           { name: "Ansys STK/MATLAB", type: "technical-software" },
           { name: "Vendor Coordination", type: "soft" }
         ]
@@ -86,10 +83,10 @@ const EXPERIENCES = [
     company: "NASA JOHNSON SPACE CENTER",
     period: "Aug 2020 – May 2022",
     description:
-      "Rotated across human research, systems engineering, human factors, and flight operations for HRP, Orion, Starliner, and exploration missions.",
+      "Rotated across human factors research, systems engineering, and flight operations for HRP, Orion, Starliner, and Lunar exploration missions.",
     skills: [
       { name: "Python", type: "technical-software" },
-      { name: "Systems Engineering", type: "technical-hardware" },
+      { name: "Data Science", type: "technical-hardware" },
       { name: "Human Factors", type: "technical-hardware" },
       { name: "Mission Operations", type: "technical-hardware" },
       { name: "Technical Communication", type: "soft" }
@@ -137,7 +134,7 @@ const EXPERIENCES = [
         role: "Flight Operations Engineer (Intern)",
         company: "NASA JSC",
         period: "Aug 2020 – May 2021",
-        description: `• Tested and verified ground displays and UIs for uncrewed and crewed Boeing Starliner missions.
+        description: `• Tested and verified ground displays and Operator UIs for uncrewed and crewed Boeing Starliner missions.
 • Used object-based data models and process flow diagrams to align mission operations architecture with controller procedures.`,
         skills: [
           { name: "Mission Display Development", type: "technical-hardware" },
@@ -162,154 +159,170 @@ const EXPERIENCES = [
   }
 ];
 
-// --- Helper Components ---
 
-// Helper to render description text as bullet points if appropriate
+// --- HELPER COMPONENTS ---
+
 const DescriptionRenderer = ({ text, isDarkMode, accentHex }) => {
   if (!text) return null;
-
-  // Check if text contains bullet points
   if (text.includes('•')) {
     const items = text.split('•').map(item => item.trim()).filter(item => item.length > 0);
     return (
       <ul className="list-none space-y-2 mb-6">
         {items.map((item, index) => (
           <li key={index} className={`flex items-start leading-relaxed ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>
-            {/* Custom bullet that mirrors nav/timeline style */}
-            <span 
-              className="mr-3 mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0 opacity-80" 
-              style={{ backgroundColor: accentHex }} 
-            />
+            <span className="mr-3 mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0 opacity-80" style={{ backgroundColor: accentHex }} />
             <span>{item}</span>
           </li>
         ))}
       </ul>
     );
   }
+  return <p className={`mb-6 leading-relaxed ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>{text}</p>;
+};
 
-  // Fallback for standard paragraphs
+const SkillJewel = ({ skill, isDarkMode }) => {
+  const getHoverColor = (type) => {
+    switch(type) {
+      case 'technical-software': 
+      case 'technical-hardware': 
+        return "hover:bg-gradient-to-r hover:from-[#591C05] hover:to-[#6F3D16] hover:text-white hover:border-[#591C05] hover:shadow-[0_0_10px_rgba(89,28,5,0.4)]";
+      case 'soft': 
+        return "hover:bg-gradient-to-r hover:from-[#035373] hover:to-[#023859] hover:text-white hover:border-[#035373] hover:shadow-[0_0_10px_rgba(3,83,115,0.4)]";
+      default:
+        return "hover:bg-slate-600 hover:text-slate-50";
+    }
+  };
+
+  const defaultColor = isDarkMode
+    ? "bg-white/5 border-stone-700 text-stone-500"
+    : "bg-black/5 border-stone-300 text-stone-500";
+
   return (
-    <p className={`mb-6 leading-relaxed ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>
-      {text}
-    </p>
+    <span className={`px-3 py-1 rounded-full text-xs font-bold border backdrop-blur-sm uppercase tracking-wider transition-all duration-300 cursor-pointer select-none ${defaultColor} ${getHoverColor(skill.type)}`}>
+      {skill.name}
+    </span>
   );
 };
 
-// --- Helper Logic for Three.js Waves (Welcome Screen) ---
+// --- CORE EXPERIENCE COMPONENT ---
+const ExperienceItem = ({ 
+  job, 
+  isDarkMode, 
+  accentHex, 
+  isExpanded, 
+  onToggle, 
+  isHovered, 
+  onHoverChange 
+}) => {
+  return (
+    <div className="relative mb-16 group">
+      {/* Timeline Node */}
+      <div 
+         className={`absolute -left-[9px] top-6 w-5 h-5 rounded-full border-4 ${isDarkMode ? 'border-[#1a1a1a]' : 'border-[#f0f0e8]'} z-10 transition-transform group-hover:scale-125`} 
+         style={{ backgroundColor: accentHex }}
+      />
+      
+      {/* Card Container */}
+      <div 
+        className={`
+          ml-8 p-6 md:p-8 rounded-3xl transition-all duration-300 border
+          ${isDarkMode 
+            ? 'bg-stone-900/80 border-stone-800 hover:border-[#F2D399]/50' 
+            : 'bg-white/60 border-stone-200 hover:border-[#40382A]/50'}
+          shadow-xl hover:shadow-2xl backdrop-blur-sm
+        `}
+        onMouseEnter={() => onHoverChange(job.id)}
+        onMouseLeave={() => onHoverChange(null)}
+      >
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 gap-2">
+          <div className="flex-1">
+            <h3 className="text-2xl font-bold">{job.role}</h3>
+            <div className="font-bold tracking-wide text-sm uppercase mt-1" style={{ color: accentHex }}>{job.company}</div>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <div className={`font-mono text-sm ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+              {job.period}
+            </div>
+            {/* Toggle Button */}
+            {job.subExperiences && (
+              <motion.button
+                onClick={() => onToggle(job.id)}
+                className={`p-1 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10 text-stone-400' : 'hover:bg-black/5 text-stone-500'}`}
+                // Only animate if collapsed AND hovered
+                animate={(!isExpanded && isHovered) ? {
+                  boxShadow: [
+                    `0 0 0px ${isDarkMode ? 'rgba(242, 211, 153, 0)' : 'rgba(64, 56, 42, 0)'}`,
+                    `0 0 15px ${isDarkMode ? 'rgba(242, 211, 153, 0.6)' : 'rgba(64, 56, 42, 0.4)'}`,
+                    `0 0 0px ${isDarkMode ? 'rgba(242, 211, 153, 0)' : 'rgba(64, 56, 42, 0)'}`
+                  ]
+                } : {
+                  boxShadow: '0 0 0px rgba(0,0,0,0)'
+                }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              </motion.button>
+            )}
+          </div>
+        </div>
 
-const createMinimalWaves = (time) => {
-  return [
-    {
-      position: [0, 0, 0],
-      frequency: 1.5,
-      amplitude: 0.4,
-      phase: time * 2,
-    },
-    {
-      position: [Math.cos(time * 0.3) * 2, 0, Math.sin(time * 0.3) * 2],
-      frequency: 1.8,
-      amplitude: 0.3,
-      phase: time * 1.5,
-    },
-    {
-      position: [
-        Math.cos(time * 0.3 + Math.PI) * 1.5,
-        0,
-        Math.sin(time * 0.3 + Math.PI) * 1.5,
-      ],
-      frequency: 2.1,
-      amplitude: 0.25,
-      phase: time * 1.8,
-    },
-  ];
+        {/* Content */}
+        <DescriptionRenderer text={job.description} isDarkMode={isDarkMode} accentHex={accentHex} />
+
+        <div className="flex flex-wrap gap-2 mb-4">
+          {job.skills.map((skill, idx) => (
+            <SkillJewel key={idx} skill={skill} isDarkMode={isDarkMode} />
+          ))}
+        </div>
+
+        {/* Nested Experiences */}
+        <AnimatePresence>
+          {isExpanded && job.subExperiences && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className={`relative mt-6 pt-6 border-t ${isDarkMode ? 'border-stone-800' : 'border-stone-200'}`}>
+                {/* Nested Timeline Line */}
+                <div className={`absolute left-1.5 top-10 bottom-6 w-0.5 ${isDarkMode ? 'bg-stone-800' : 'bg-stone-300'} opacity-50`} />
+
+                {job.subExperiences.map((subJob) => (
+                  <div key={subJob.id} className="relative pl-8 mb-8 last:mb-0">
+                    <div 
+                       className={`absolute left-0 top-2 w-3.5 h-3.5 rounded-full border-2 ${isDarkMode ? 'border-[#1a1a1a]' : 'border-[#f0f0e8]'}`}
+                       style={{ backgroundColor: accentHex }}
+                    />
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-1">
+                      <h4 className={`text-lg font-bold ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{subJob.role}</h4>
+                      <span className={`font-mono text-xs ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>{subJob.period}</span>
+                    </div>
+                    <DescriptionRenderer text={subJob.description} isDarkMode={isDarkMode} accentHex={accentHex} />
+                    <div className="flex flex-wrap gap-2">
+                      {subJob.skills.map((skill, idx) => (
+                        <SkillJewel key={idx} skill={skill} isDarkMode={isDarkMode} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
 };
 
-const createEssentialField = (sources, time, color) => {
-  const size = 6;
-  const resolution = 24;
-  const step = size / resolution;
+// --- BACKGROUND EFFECTS ---
 
-  const material = new THREE.LineBasicMaterial({
-    color: color,
-    transparent: true,
-    opacity: 0.35,
-  });
-
-  const linesGroup = new THREE.Group();
-
-  const computeHeight = (x, z) => {
-    let height = 0;
-
-    sources.forEach(({ position, frequency, amplitude, phase }) => {
-      const [sx, , sz] = position;
-      const dx = x - sx;
-      const dz = z - sz;
-      const distance = Math.sqrt(dx * dx + dz * dz);
-
-      height +=
-        Math.sin(distance * frequency - time * 3 + phase) *
-        amplitude *
-        Math.exp(-distance * 0.4);
-    });
-
-    return height * 0.7;
-  };
-
-  // Horizontal & vertical grid lines
-  for (let i = 0; i <= resolution; i += 2) {
-    // Horizontal lines
-    {
-      const x = i * step - size / 2;
-      const hPoints = [];
-
-      for (let j = 0; j <= resolution; j++) {
-        const z = j * step - size / 2;
-        const height = computeHeight(x, z);
-        hPoints.push(x, height, z);
-      }
-
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute(
-        'position',
-        new THREE.Float32BufferAttribute(hPoints, 3)
-      );
-
-      const line = new THREE.Line(geometry, material);
-      linesGroup.add(line);
-    }
-
-    // Vertical lines
-    {
-      const z = i * step - size / 2;
-      const vPoints = [];
-
-      for (let j = 0; j <= resolution; j++) {
-        const x = j * step - size / 2;
-        const height = computeHeight(x, z);
-        vPoints.push(x, height, z);
-      }
-
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute(
-        'position',
-        new THREE.Float32BufferAttribute(vPoints, 3)
-      );
-
-      const line = new THREE.Line(geometry, material);
-      linesGroup.add(line);
-    }
-  }
-
-  return linesGroup;
-};
-
-// --- Components ---
-
-// 1. Glowing Eye Animation (Welcome Screen)
 const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
   const canvasRef = useRef(null);
   const animationFrameRef = useRef(null);
-  const expansionRef = useRef(0); // Track expansion for the "reverse" transition
+  const expansionRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -317,7 +330,6 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
     
     const ctx = canvas.getContext('2d');
     
-    // Full screen handling
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -329,13 +341,11 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
     let height = canvas.height;
     let centerX = width / 2;
     let centerY = height / 2;
-    // Adjust radius based on screen size
     let radius = Math.min(width, height) * 0.35;
     
-    const PARTICLE_COUNT = 8000; // Adjusted for performance/full screen
+    const PARTICLE_COUNT = 8000;
     const particles = [];
     
-    // Initialize particles based on provided logic
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const side = i < PARTICLE_COUNT / 2 ? 'dark' : 'light';
       const angle = Math.random() * Math.PI * 2;
@@ -369,11 +379,10 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
     
     let time = 0;
     let lastTime = 0;
-    const FPS = 30; // Smoother FPS
+    const FPS = 30;
     const frameDelay = 1000 / FPS;
     
     function animate(currentTime) {
-      // Update dimensions in loop in case of resize
       width = canvas.width;
       height = canvas.height;
       centerX = width / 2;
@@ -389,14 +398,12 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
         time += 0.008;
         lastTime = currentTime;
         
-        // Handle Transition: "Reverse" = Expansion
         if (zoomActive) {
-            expansionRef.current += 0.5; // Speed of expansion
+            expansionRef.current += 0.5;
         } else {
             expansionRef.current = Math.max(0, expansionRef.current - 0.5);
         }
 
-        // Clear with trails - Theme Aware
         const trailColor = isDarkMode ? 'rgba(26, 26, 26, 0.1)' : 'rgba(240, 238, 230, 0.1)';
         ctx.fillStyle = trailColor;
         ctx.fillRect(0, 0, width, height);
@@ -408,7 +415,6 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
           const convergenceCycle = Math.sin(particle.convergencePhase);
           const isConverging = convergenceCycle > 0;
           
-          // Apply base animation logic
           if (isConverging) {
             const convergenceStrength = convergenceCycle;
             particle.targetX = centerX;
@@ -418,7 +424,6 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
               (particle.x - centerX) ** 2 + 
               (particle.y - centerY) ** 2
             );
-            // Prevent division by zero
             const safeRadius = radius || 1;
             const moveSpeed = 0.02 * convergenceStrength * (distanceToCenter / safeRadius);
             
@@ -426,15 +431,8 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
             particle.y += (particle.targetY - particle.y) * moveSpeed;
           } else {
             const transitionProgress = Math.abs(convergenceCycle);
-            let newAngle, newRadius;
-            
-            if (particle.side === 'dark') {
-              newAngle = particle.initialAngle + Math.PI;
-              newRadius = particle.initialRadius;
-            } else {
-              newAngle = particle.initialAngle + Math.PI;
-              newRadius = particle.initialRadius;
-            }
+            let newAngle = particle.initialAngle + Math.PI;
+            let newRadius = particle.initialRadius;
             
             const sCurveEffect = Math.sin(newAngle * 2) * radius * 0.5;
             const curvedAngle = newAngle + (sCurveEffect / newRadius) * transitionProgress;
@@ -447,26 +445,17 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
             particle.y += (particle.targetY - particle.y) * moveSpeed;
           }
 
-          // APPLY TRANSITION: Force Outward Expansion
           if (expansionRef.current > 0) {
              const dx = particle.x - centerX;
              const dy = particle.y - centerY;
              const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-             // Move away from center exponentially based on expansionRef
              const expansionForce = expansionRef.current * 2; 
              particle.x += (dx / dist) * expansionForce;
              particle.y += (dy / dist) * expansionForce;
           }
           
-          // Determine color based on position
-          const dx = particle.x - centerX;
-          const dy = particle.y - centerY;
-          const particleAngle = Math.atan2(dy, dx);
-          const normalizedAngle = (particleAngle + Math.PI * 2) % (Math.PI * 2);
-          
           let color, alpha;
           
-          // Theme Aware Particle Colors
           if (isConverging) {
             if (isDarkMode) {
                color = particle.side === 'dark' ? '100, 100, 100' : '200, 200, 200';
@@ -477,7 +466,6 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
           } else {
             const transition = Math.abs(convergenceCycle);
             if (isDarkMode) {
-                // Invert logic for dark mode visibility
                 const val = particle.side === 'dark' 
                     ? 100 + transition * 100 
                     : 200 - transition * 100;
@@ -492,14 +480,12 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
             alpha = 0.3 * transition;
           }
           
-          // Draw particle
           ctx.beginPath();
           ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${color}, ${alpha})`;
           ctx.fill();
         });
         
-        // Draw central convergence point
         const centralGlow = Math.sin(time * 0.1) * 0.5 + 0.5;
         ctx.beginPath();
         ctx.arc(centerX, centerY, 2 + centralGlow * 3, 0, Math.PI * 2);
@@ -517,7 +503,7 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isDarkMode, zoomActive]); // Re-run if theme changes
+  }, [isDarkMode, zoomActive]);
   
   return (
     <canvas
@@ -528,7 +514,6 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
   );
 };
 
-// 2. Canyon Particle Flow (Experience Page Background)
 const CanyonParticles = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
   const animationFrameRef = useRef(null);
@@ -539,19 +524,17 @@ const CanyonParticles = ({ isDarkMode }) => {
     
     const ctx = canvas.getContext('2d');
     
-    // Handle Resize
     const handleResize = () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     };
     window.addEventListener('resize', handleResize);
-    handleResize(); // Init size
+    handleResize();
 
-    const PARTICLE_COUNT = 8000; // Adjusted for full screen vs 550px box
+    const PARTICLE_COUNT = 8000;
     const WALL_LAYERS = 8;
     const particles = [];
     
-    // Initialize particles
     const initParticles = () => {
         particles.length = 0;
         const width = canvas.width;
@@ -601,18 +584,16 @@ const CanyonParticles = ({ isDarkMode }) => {
       const height = canvas.height;
       const centerX = width / 2;
       
-      // Theme-aware Clear Color (Trail Effect)
       const r = isDarkMode ? 26 : 240;
       const g = isDarkMode ? 26 : 238;
       const b = isDarkMode ? 26 : 230;
       
-      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.1)`; // Increased trail fade slightly for cleaner look
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.1)`;
       ctx.fillRect(0, 0, width, height);
       
       particles.sort((a, b) => a.z - b.z);
       
       particles.forEach(particle => {
-        // Calculate complex wave position
         const wavePhase1 = particle.y * 0.008 + time * 0.05;
         const wavePhase2 = particle.y * 0.03 + time * 0.1 + particle.layer * 0.5;
         const wavePhase3 = particle.y * 0.05 + time * 0.15 + particle.layer * 1.2;
@@ -628,7 +609,6 @@ const CanyonParticles = ({ isDarkMode }) => {
         const targetX = centerX + particle.side * (80 + combinedWave + layerDepth);
         const layerDrift = Math.sin(particle.drift + time * 0.5 + particle.layer * 0.3) * wallThickness * 0.5;
         
-        // Smooth movement
         particle.x = particle.x * 0.92 + (targetX + layerDrift) * 0.08;
         particle.y += particle.speed;
         
@@ -682,7 +662,6 @@ const CanyonParticles = ({ isDarkMode }) => {
   );
 };
 
-// 3. Torus Field Dynamics (Portfolio Page Background)
 const TorusFieldDynamics = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
   
@@ -704,7 +683,6 @@ const TorusFieldDynamics = ({ isDarkMode }) => {
     let animationFrameId;
     
     const animate = () => {
-      // Theme colors
       const strokeColorBase = isDarkMode ? '200, 200, 200' : '80, 80, 80';
       const bgColor = isDarkMode ? '#1a1a1a' : '#F0EEE6';
       
@@ -716,11 +694,9 @@ const TorusFieldDynamics = ({ isDarkMode }) => {
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
       
-      // Scale calculation to fit nicely on screen relative to the original 550px logic
       const minDim = Math.min(canvas.width, canvas.height);
       const baseScale = minDim / 800; 
 
-      // Draw field lines of growing wisdom
       const fieldLines = 40;
       const toroidalRadius = 120 * baseScale;
       const poloidalRadius = 60 * baseScale;
@@ -731,18 +707,15 @@ const TorusFieldDynamics = ({ isDarkMode }) => {
         for (let j = 0; j < fieldLines; j++) {
           const v = (j / fieldLines) * Math.PI * 2;
           
-          // Torus parametric equations
           const x = (toroidalRadius + poloidalRadius * Math.cos(v)) * Math.cos(u);
           const y = (toroidalRadius + poloidalRadius * Math.cos(v)) * Math.sin(u);
           const z = poloidalRadius * Math.sin(v);
           
-          // Project 3D to 2D with perspective
           const perspective = 200 * baseScale;
           const scale = perspective / (perspective + z);
           const screenX = centerX + x * scale;
-          const screenY = centerY + y * scale * 0.5; // Flatten for top view
+          const screenY = centerY + y * scale * 0.5; 
           
-          // Add dynamic movement
           const phase = time + u * 0.5 + v * 0.5;
           const offset = Math.sin(phase) * (5 * baseScale);
           
@@ -753,7 +726,6 @@ const TorusFieldDynamics = ({ isDarkMode }) => {
         }
       }
       
-      // Draw energy flow lines
       const flowLines = 20;
       for (let i = 0; i < flowLines; i++) {
         const angle = (i / flowLines) * Math.PI * 2;
@@ -776,7 +748,6 @@ const TorusFieldDynamics = ({ isDarkMode }) => {
         ctx.stroke();
       }
       
-      // Draw the enduring center that gives strength
       const vortexRadius = 30 * baseScale;
       ctx.beginPath();
       ctx.arc(centerX, centerY, vortexRadius, 0, Math.PI * 2);
@@ -784,7 +755,6 @@ const TorusFieldDynamics = ({ isDarkMode }) => {
       ctx.lineWidth = 2;
       ctx.stroke();
       
-      // Vortex spiral
       ctx.beginPath();
       const spiralTurns = 3;
       for (let i = 0; i < 100; i++) {
@@ -805,7 +775,6 @@ const TorusFieldDynamics = ({ isDarkMode }) => {
       ctx.lineWidth = 1;
       ctx.stroke();
       
-      // Add harmonic rings
       for (let r = 50 * baseScale; r < 250 * baseScale; r += 30 * baseScale) {
         ctx.beginPath();
         ctx.arc(centerX, centerY, r + Math.sin(time + r * 0.01) * (5 * baseScale), 0, Math.PI * 2);
@@ -833,7 +802,6 @@ const TorusFieldDynamics = ({ isDarkMode }) => {
   );
 };
 
-// 4. Vortex Particle System (Thoughts Page Background)
 const VortexParticleSystem = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
 
@@ -844,14 +812,12 @@ const VortexParticleSystem = ({ isDarkMode }) => {
     const width = canvasContainer.clientWidth;
     const height = canvasContainer.clientHeight;
 
-    // Initialize Three.js components
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     
     renderer.setSize(width, height);
     
-    // Theme colors
     const bgColor = isDarkMode ? 0x1a1a1a : 0xF0EEE6;
     const particleColor = isDarkMode ? 0xaaaaaa : 0x333333;
 
@@ -860,7 +826,6 @@ const VortexParticleSystem = ({ isDarkMode }) => {
     
     camera.position.z = 7;
     
-    // Create particles
     const particleCount = 25000;
     const particles = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
@@ -868,7 +833,6 @@ const VortexParticleSystem = ({ isDarkMode }) => {
     const opacities = new Float32Array(particleCount);
     const indices = new Float32Array(particleCount);
     
-    // Let particles find their natural path to the center
     for (let i = 0; i < particleCount; i++) {
       const i3 = i * 3;
       const t = Math.random();
@@ -893,7 +857,6 @@ const VortexParticleSystem = ({ isDarkMode }) => {
     particles.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
     particles.setAttribute('index', new THREE.BufferAttribute(indices, 1));
     
-    // Custom shader material
     const particleMaterial = new THREE.ShaderMaterial({
       transparent: true,
       depthWrite: false,
@@ -965,7 +928,6 @@ const VortexParticleSystem = ({ isDarkMode }) => {
     
     animationId = requestAnimationFrame(animate);
     
-    // Handle Resize
     const handleResize = () => {
         const newWidth = canvasContainer.clientWidth;
         const newHeight = canvasContainer.clientHeight;
@@ -992,47 +954,13 @@ const VortexParticleSystem = ({ isDarkMode }) => {
       }
       renderer.dispose();
     };
-  }, [isDarkMode]); // Re-run on theme change to update colors
+  }, [isDarkMode]);
 
   return (
     <div ref={canvasRef} className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10" />
   );
 };
 
-// 5. Skill Jewel Component
-const SkillJewel = ({ skill, isDarkMode }) => {
-  // Jewel tone mapping applied only on HOVER/Active
-  const getHoverColor = (type) => {
-    switch(type) {
-      case 'technical-software': 
-      case 'technical-hardware': 
-        // Technical: Gradient from #591C05 to #6F3D16
-        return "hover:bg-gradient-to-r hover:from-[#591C05] hover:to-[#6F3D16] hover:text-white hover:border-[#591C05] hover:shadow-[0_0_10px_rgba(89,28,5,0.4)]";
-      case 'soft': 
-        // Soft Skills: Gradient from #035373 to #023859
-        return "hover:bg-gradient-to-r hover:from-[#035373] hover:to-[#023859] hover:text-white hover:border-[#035373] hover:shadow-[0_0_10px_rgba(3,83,115,0.4)]";
-      default:
-        return "hover:bg-slate-600 hover:text-slate-50";
-    }
-  };
-
-  // Default "colorless" state based on theme
-  const defaultColor = isDarkMode
-    ? "bg-white/5 border-stone-700 text-stone-500"
-    : "bg-black/5 border-stone-300 text-stone-500";
-
-  return (
-    <span className={`
-      px-3 py-1 rounded-full text-xs font-bold border backdrop-blur-sm uppercase tracking-wider transition-all duration-300 cursor-pointer select-none
-      ${defaultColor}
-      ${getHoverColor(skill.type)}
-    `}>
-      {skill.name}
-    </span>
-  );
-};
-
-// 6. Placeholder Text Component
 const StillForming = ({ isDarkMode, showGraphic = true }) => {
   return (
     <div className="relative flex flex-col items-center justify-center h-full w-full animate-in fade-in duration-700">
@@ -1066,14 +994,15 @@ const StillForming = ({ isDarkMode, showGraphic = true }) => {
   );
 };
 
-// --- Main Application Component ---
+// --- MAIN APPLICATION COMPONENT ---
 
 export default function App() {
   const [entered, setEntered] = useState(false);
   const [zoomActive, setZoomActive] = useState(false);
   const [activeTab, setActiveTab] = useState('Experiences'); 
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [expandedExperience, setExpandedExperience] = useState(null); // State for dropdown
+  const [expandedExperience, setExpandedExperience] = useState(null); 
+  const [hoveredExperienceId, setHoveredExperienceId] = useState(null); 
 
   useEffect(() => {
     const link = document.createElement('link');
@@ -1097,13 +1026,12 @@ export default function App() {
     ? "bg-[#1a1a1a] text-[#e6e6e6]" 
     : "bg-[#f0f0e8] text-[#1a1a1a]";
 
-  // New accent color logic
   const accentHex = isDarkMode ? '#F2D399' : '#40382A';
 
   return (
     <div className={`relative w-full h-screen overflow-hidden transition-colors duration-500 ${themeClasses}`} style={{ fontFamily: FONTS.body }}>
       
-      {/* --- Controls --- */}
+      {/* Controls */}
       <button 
         onClick={() => setIsDarkMode(!isDarkMode)}
         className="absolute top-6 right-6 z-50 p-2 rounded-full hover:bg-white/10 transition-colors"
@@ -1112,12 +1040,11 @@ export default function App() {
         {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
       </button>
 
-      {/* --- Entry View --- */}
+      {/* Entry View */}
       {!entered && (
         <motion.div 
           onClick={handleEnter}
           className="absolute inset-0 flex flex-col items-center justify-center z-40 overflow-hidden cursor-pointer"
-          // Transition Logic: Dissolve text
           animate={zoomActive ? { opacity: 0 } : { opacity: 1 }}
           transition={{ duration: 1.5, ease: "easeInOut" }}
         >
@@ -1154,12 +1081,12 @@ export default function App() {
         </motion.div>
       )}
 
-      {/* --- Main Content View --- */}
+      {/* Main Content View */}
       {entered && (
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 2, delay: 0.5 }} // Slow fade in after entry dissolves
+          transition={{ duration: 2, delay: 0.5 }} 
           className="relative z-30 h-full flex flex-col max-w-5xl mx-auto px-4 md:px-8"
         >
           {/* Navigation */}
@@ -1177,7 +1104,7 @@ export default function App() {
                   `}
                   style={activeTab === tab ? { 
                       backgroundColor: accentHex, 
-                      color: isDarkMode ? '#1a1a1a' : '#ffffff' // Contrast text for active tab
+                      color: isDarkMode ? '#1a1a1a' : '#ffffff' 
                   } : {}}
                 >
                   {tab}
@@ -1210,116 +1137,21 @@ export default function App() {
                      <div className={`absolute left-6 md:left-12 top-0 bottom-[100px] w-0.5 ${isDarkMode ? 'bg-stone-700' : 'bg-stone-300'}`} />
 
                      {EXPERIENCES.map((job) => (
-                       <div key={job.id} className="relative mb-16 group">
-                         <div 
-                            className={`absolute -left-[9px] top-6 w-5 h-5 rounded-full border-4 ${isDarkMode ? 'border-[#1a1a1a]' : 'border-[#f0f0e8]'} z-10 transition-transform group-hover:scale-125`} 
-                            style={{ backgroundColor: accentHex }}
-                         />
-                         
-                         <div className={`
-                           ml-8 p-6 md:p-8 rounded-3xl transition-all duration-300 border
-                           ${isDarkMode 
-                             ? 'bg-stone-900/80 border-stone-800 hover:border-[#F2D399]/50' 
-                             : 'bg-white/60 border-stone-200 hover:border-[#40382A]/50'}
-                           shadow-xl hover:shadow-2xl backdrop-blur-sm
-                         `}>
-                           {/* Main Job Header */}
-                           <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 gap-2">
-                             <div className="flex-1">
-                               <h3 className="text-2xl font-bold">{job.role}</h3>
-                               <div className="font-bold tracking-wide text-sm uppercase mt-1" style={{ color: accentHex }}>{job.company}</div>
-                             </div>
-                             <div className="flex flex-col items-end gap-2">
-                               <div className={`font-mono text-sm ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
-                                 {job.period}
-                               </div>
-                               {/* Toggle Button for Nested Experiences */}
-                               {job.subExperiences && (
-                                 <motion.button
-                                   onClick={() => toggleExperience(job.id)}
-                                   className={`p-1 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10 text-stone-400' : 'hover:bg-black/5 text-stone-500'}`}
-                                   // Only animate if collapsed
-                                   animate={expandedExperience !== job.id ? {
-                                     boxShadow: [
-                                       `0 0 0px ${isDarkMode ? 'rgba(242, 211, 153, 0)' : 'rgba(64, 56, 42, 0)'}`,
-                                       `0 0 15px ${isDarkMode ? 'rgba(242, 211, 153, 0.6)' : 'rgba(64, 56, 42, 0.4)'}`, // Peak glow
-                                       `0 0 0px ${isDarkMode ? 'rgba(242, 211, 153, 0)' : 'rgba(64, 56, 42, 0)'}`
-                                     ]
-                                   } : {
-                                     boxShadow: '0 0 0px rgba(0,0,0,0)'
-                                   }}
-                                   transition={{
-                                     duration: 4,
-                                     repeat: Infinity,
-                                     ease: "easeInOut"
-                                   }}
-                                 >
-                                   {expandedExperience === job.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                                 </motion.button>
-                               )}
-                             </div>
-                           </div>
-
-                           {/* DESCRIPTION RENDERER */}
-                           <DescriptionRenderer text={job.description} isDarkMode={isDarkMode} accentHex={accentHex} />
-
-                           {/* Main Skills */}
-                           <div className="flex flex-wrap gap-2 mb-4">
-                             {job.skills.map((skill, idx) => (
-                               <SkillJewel key={idx} skill={skill} isDarkMode={isDarkMode} />
-                             ))}
-                           </div>
-
-                           {/* Nested Mini-Timeline for Sub-Experiences */}
-                           <AnimatePresence>
-                             {expandedExperience === job.id && job.subExperiences && (
-                               <motion.div
-                                 initial={{ height: 0, opacity: 0 }}
-                                 animate={{ height: 'auto', opacity: 1 }}
-                                 exit={{ height: 0, opacity: 0 }}
-                                 transition={{ duration: 0.3 }}
-                                 className="overflow-hidden"
-                               >
-                                 <div className={`relative mt-6 pt-6 border-t ${isDarkMode ? 'border-stone-800' : 'border-stone-200'}`}>
-                                   {/* Nested Timeline Line */}
-                                   <div className={`absolute left-1.5 top-10 bottom-6 w-0.5 ${isDarkMode ? 'bg-stone-800' : 'bg-stone-300'} opacity-50`} />
-
-                                   {job.subExperiences.map((subJob) => (
-                                     <div key={subJob.id} className="relative pl-8 mb-8 last:mb-0">
-                                       {/* Nested Timeline Node */}
-                                       <div 
-                                          className={`absolute left-0 top-2 w-3.5 h-3.5 rounded-full border-2 ${isDarkMode ? 'border-[#1a1a1a]' : 'border-[#f0f0e8]'}`}
-                                          style={{ backgroundColor: accentHex }}
-                                       />
-                                       
-                                       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-1">
-                                         <h4 className={`text-lg font-bold ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{subJob.role}</h4>
-                                         <span className={`font-mono text-xs ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>{subJob.period}</span>
-                                       </div>
-                                       
-                                       {/* SUB DESCRIPTION RENDERER */}
-                                       <DescriptionRenderer text={subJob.description} isDarkMode={isDarkMode} accentHex={accentHex} />
-                                       
-                                       <div className="flex flex-wrap gap-2">
-                                         {subJob.skills.map((skill, idx) => (
-                                           <SkillJewel key={idx} skill={skill} isDarkMode={isDarkMode} />
-                                         ))}
-                                       </div>
-                                     </div>
-                                   ))}
-                                 </div>
-                               </motion.div>
-                             )}
-                           </AnimatePresence>
-                         </div>
-                       </div>
+                       <ExperienceItem 
+                          key={job.id}
+                          job={job}
+                          isDarkMode={isDarkMode}
+                          accentHex={accentHex}
+                          isExpanded={expandedExperience === job.id}
+                          onToggle={toggleExperience}
+                          isHovered={hoveredExperienceId === job.id}
+                          onHoverChange={setHoveredExperienceId}
+                       />
                      ))}
                    </div>
 
-                   {/* NEW FOOTER SECTION */}
+                   {/* Footer Section */}
                    <div className="flex flex-col items-center justify-center pb-20 mt-4 px-4 md:px-12">
-                      
-                      {/* Footer Box Mimicking Experience Cards */}
                       <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -1355,7 +1187,6 @@ export default function App() {
                          </motion.a>
                       </motion.div>
 
-                      {/* Copyright Text */}
                       <div className={`mt-12 text-xs font-mono opacity-40 ${isDarkMode ? 'text-stone-400' : 'text-stone-500'}`}>
                         © 2025 Trenton // Built with Starlight
                       </div>
@@ -1409,4 +1240,3 @@ export default function App() {
     </div>
   );
 }
-
