@@ -22,9 +22,8 @@ const EXPERIENCES = [
 • Managing and tracking regulatory changes to assess impact on operations and future missions.`,
     skills: [
       { name: "Satellite Regulations", type: "technical-hardware" },
-      { name: "STK", type: "technical-software" },
       { name: "FCC / ITU Filings", type: "technical-hardware" },
-      { name: "Python", type: "technical-software" },
+      { name: "RF Systems", type: "technical-software" },
       { name: "Cross-functional Collaboration", type: "soft" }
     ]
   },
@@ -35,10 +34,9 @@ const EXPERIENCES = [
     period: "Aug 2022 – Aug 2025",
     description: `Contributed to novel mission operations by developing ground-segment capabilities, supporting satellite flight operations, and managing regulatory licensing while refining operator interfaces and creating AI-driven tools to enhance operational performance.`,
     skills: [
-      { name: "", type: "technical-hardware" },
       { name: "Mission Operations", type: "technical-hardware" },
       { name: "Systems Engineering", type: "technical-hardware" },
-      { name: "AWS (EKS, Docker, K8s)", type: "technical-software" },
+      { name: "AWS / Docker / Redis", type: "technical-software" },
       { name: "Grafana / OpenC3 / Figma", type: "technical-software" }
     ],
     subExperiences: [
@@ -1238,5 +1236,6 @@ export default function App() {
     </div>
   );
 }
+
 
 
