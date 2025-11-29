@@ -62,7 +62,7 @@ const EXPERIENCES = [
         role: "Ground Data Systems Engineer",
         company: "BLUE ORIGIN",
         period: "Aug 2022 – Aug 2024",
-        description: `• Built and maintained Grafana/OpenC3 dashboards showing real-time state of vehicle telemetry and ground systems.
+        description: '• Built and maintained Grafana/OpenC3 dashboards showing real-time state of vehicle telemetry and ground systems.
 • Supported AWS-based ground software (EKS, Docker, Kubernetes) across development, test, and flight environments.
 • Performed STK coverage analysis and coordinated with ground-station vendors on configuration and operations plans.`,
         skills: [
@@ -1504,3 +1504,4 @@ export default function App() {
     </div>
   );
 }
+
