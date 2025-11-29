@@ -49,7 +49,7 @@ const EXPERIENCES = [
         description: `• Led spectrum and operational licensing inputs for missions, coordinating with FCC, ITU, NTIA, NASA, DoD, and NOAA.
 • Served and Trained as Ground Control Operator for New Glenn’s first flight with the Blue Ring Payload.
 • Co‑designed an AI‑powered ops workflow, defining end‑to‑end architecture, agent interactions, and data‑flow schemas that embedded LLM toolchains into our ground system and reduced routine data‑validation tasks and accelerated mission tooling development. 
-• Wrote, tested, and executed procedural documentation to be used to command and receive vehicle telemetry.',
+• Wrote, tested, and executed  procedural documentation to be used to command and receive vehicle telemetry.
         skills: [
           { name: "Spectrum Coordination", type: "technical-hardware" },
           { name: "AI R&D", type: "technical-hardware" },
@@ -62,7 +62,7 @@ const EXPERIENCES = [
         role: "Ground Data Systems Engineer",
         company: "BLUE ORIGIN",
         period: "Aug 2022 – Aug 2024",
-        description: '• Built and maintained Grafana/OpenC3 dashboards showing real-time state of vehicle telemetry and ground systems.
+        description: `• Built and maintained Grafana/OpenC3 dashboards showing real-time state of vehicle telemetry and ground systems.
 • Supported AWS-based ground software (EKS, Docker, Kubernetes) across development, test, and flight environments.
 • Performed STK coverage analysis and coordinated with ground-station vendors on configuration and operations plans.`,
         skills: [
@@ -160,6 +160,10 @@ const EXPERIENCES = [
 const Artwork33 = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
   const animationFrameRef = useRef(null);
+  
+  // --- SETTING: ANIMATION SPEED ---
+  // Lower this number to slow it down (e.g., 0.5 is half speed, 0.2 is very slow)
+  const ANIMATION_SPEED_FACTOR = 0.3; 
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -169,7 +173,6 @@ const Artwork33 = ({ isDarkMode }) => {
     
     // Handle High DPI displays
     const dpr = window.devicePixelRatio || 1;
-    // We'll use the container's size
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
@@ -180,9 +183,7 @@ const Artwork33 = ({ isDarkMode }) => {
 
     // Define colors based on isDarkMode
     const bgColor = isDarkMode ? '#1a1a1a' : '#F0EEE6';
-    // Particle color base (dark in light mode, light in dark mode)
     const pColor = isDarkMode ? { r: 200, g: 200, b: 200 } : { r: 10, g: 10, b: 10 };
-    // Line/Connection color base
     const lColor = isDarkMode ? { r: 220, g: 220, b: 220 } : { r: 20, g: 20, b: 20 };
 
     // Core variables
@@ -212,7 +213,7 @@ const Artwork33 = ({ isDarkMode }) => {
       return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
 
-    // HelixParticle - each point balanced between opposing forces
+    // HelixParticle
     class HelixParticle {
       constructor(initialPhase) {
         this.phase = initialPhase || random(TWO_PI);
@@ -220,15 +221,15 @@ const Artwork33 = ({ isDarkMode }) => {
         this.yOffset = random(-300, 300);
         this.ySpeed = random(0.3, 0.6) * (random() > 0.5 ? 1 : -1);
         this.rotationSpeed = random(0.005, 0.0075);
-        this.size = random(3, 6); // Slightly larger points
+        this.size = random(3, 6); 
         this.opacity = random(120, 180);
         this.strength = random(0.8, 1);
       }
 
       update() {
-        // Update position - success and failure are one movement
-        this.phase += this.rotationSpeed * this.strength;
-        this.yOffset += this.ySpeed;
+        // Apply Speed Factor here
+        this.phase += (this.rotationSpeed * this.strength) * ANIMATION_SPEED_FACTOR;
+        this.yOffset += this.ySpeed * ANIMATION_SPEED_FACTOR;
 
         // Reset position if it goes off screen
         if (this.yOffset > 350) this.yOffset = -350;
@@ -239,18 +240,16 @@ const Artwork33 = ({ isDarkMode }) => {
         const y = height / 2 + this.yOffset;
         const z = Math.sin(this.phase) * this.radius;
 
-        // Store position for drawing and connections
         return { x, y, z, strength: this.strength, size: this.size, opacity: this.opacity };
       }
     }
 
-    // Create helix particles - fewer points
+    // Create helix particles
     for (let i = 0; i < numParticles; i++) {
-      const initialPhase = (i / numParticles) * TWO_PI * 3; // Create 3 full rotations
+      const initialPhase = (i / numParticles) * TWO_PI * 3; 
       particles.push(new HelixParticle(initialPhase));
     }
 
-    // Frame rate control variables
     const targetFPS = 30;
     const frameInterval = 1000 / targetFPS;
     let lastFrameTime = 0;
@@ -264,7 +263,6 @@ const Artwork33 = ({ isDarkMode }) => {
 
       const deltaTime = currentTime - lastFrameTime;
       
-      // Only render a new frame when enough time has passed (frame rate limiting)
       if (deltaTime >= frameInterval) {
         const remainder = deltaTime % frameInterval;
         lastFrameTime = currentTime - remainder;
@@ -273,32 +271,23 @@ const Artwork33 = ({ isDarkMode }) => {
         ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, width, height);
 
-        time += 0.02;
+        time += 0.02 * ANIMATION_SPEED_FACTOR;
 
         // Update helix points
         helixPoints = particles.map(particle => particle.update());
-
-        // Find balance between foreground and background, like hope and fear
         helixPoints.sort((a, b) => a.z - b.z);
 
-        // Draw stronger connections between helix points
-        ctx.lineWidth = 1.2; // Thicker lines
-
-        // Connect helix points to create a strand structure
+        // Connections
+        ctx.lineWidth = 1.2;
         for (let i = 0; i < helixPoints.length; i++) {
           const hp1 = helixPoints[i];
-
-          // Connect to nearby points
           for (let j = 0; j < helixPoints.length; j++) {
             if (i !== j) {
               const hp2 = helixPoints[j];
               const d = dist(hp1.x, hp1.y, hp1.z, hp2.x, hp2.y, hp2.z);
 
-              // Create more connections with a larger distance threshold
               if (d < 120) {
-                // Calculate opacity based on distance and z-position (depth)
                 const opacity = map(d, 0, 120, 40, 10) * map(Math.min(hp1.z, hp2.z), -110, 110, 0.3, 1);
-
                 ctx.strokeStyle = `rgba(${lColor.r}, ${lColor.g}, ${lColor.b}, ${opacity / 255})`;
                 ctx.beginPath();
                 ctx.moveTo(hp1.x, hp1.y);
@@ -309,10 +298,9 @@ const Artwork33 = ({ isDarkMode }) => {
           }
         }
 
-        // Draw helix points with size based on z-position for 3D effect
+        // Draw helix points
         for (let i = 0; i < helixPoints.length; i++) {
           const hp = helixPoints[i];
-          // Calculate size and opacity based on z-position (depth)
           const sizeMultiplier = map(hp.z, -110, 110, 0.6, 1.3);
           const adjustedOpacity = map(hp.z, -110, 110, hp.opacity * 0.4, hp.opacity);
 
@@ -322,21 +310,16 @@ const Artwork33 = ({ isDarkMode }) => {
           ctx.fill();
         }
 
-        // Create spinal connections - stronger central structure
-        // Spine color
+        // Spine
         const sStroke = isDarkMode ? 'rgba(255, 255, 255, 0.118)' : 'rgba(0, 0, 0, 0.118)';
         ctx.strokeStyle = sStroke;
         ctx.lineWidth = 2;
-
-        // Sort by y position for the spine
         const sortedByY = [...helixPoints].sort((a, b) => a.y - b.y);
 
-        // Draw spine connecting points with similar y positions
         for (let i = 0; i < sortedByY.length - 1; i++) {
           const p1 = sortedByY[i];
           const p2 = sortedByY[i + 1];
 
-          // Only connect if they're close in y position
           if (Math.abs(p1.y - p2.y) < 30) {
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
@@ -345,12 +328,9 @@ const Artwork33 = ({ isDarkMode }) => {
           }
         }
       }
-
-      // Request next frame
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    // Start the animation immediately with proper frame timing
     animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
@@ -917,7 +897,7 @@ const CanyonParticles = ({ isDarkMode }) => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10"
+      className="w-full h-full"
     />
   );
 };
@@ -1057,7 +1037,7 @@ const TorusFieldDynamics = ({ isDarkMode }) => {
   return (
     <canvas 
       ref={canvasRef} 
-      className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10"
+      className="w-full h-full"
     />
   );
 };
@@ -1217,7 +1197,7 @@ const VortexParticleSystem = ({ isDarkMode }) => {
   }, [isDarkMode]);
 
   return (
-    <div ref={canvasRef} className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10" />
+    <div ref={canvasRef} className="w-full h-full" />
   );
 };
 
@@ -1263,6 +1243,10 @@ export default function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [expandedExperience, setExpandedExperience] = useState(null); 
   const [hoveredExperienceId, setHoveredExperienceId] = useState(null); 
+  
+  // NEW: State and Ref for scroll detection (Change 2 - Retained)
+  const [scrolledDown, setScrolledDown] = useState(false);
+  const mainContentRef = useRef(null);
 
   useEffect(() => {
     const link = document.createElement('link');
@@ -1271,6 +1255,16 @@ export default function App() {
     document.head.appendChild(link);
   }, []);
 
+  // NEW: Scroll handler function (Change 2 - Retained)
+  const handleScroll = () => {
+    if (mainContentRef.current) {
+      const scrollTop = mainContentRef.current.scrollTop;
+      // Set to true once scrolled past a small threshold (e.g., 50px)
+      setScrolledDown(scrollTop > 50);
+    }
+  };
+
+  // REVERTED: Standard transition speed
   const handleEnter = () => {
     setZoomActive(true);
     setTimeout(() => {
@@ -1306,7 +1300,7 @@ export default function App() {
           onClick={handleEnter}
           className="absolute inset-0 flex flex-col items-center justify-center z-40 overflow-hidden cursor-pointer"
           animate={zoomActive ? { opacity: 0 } : { opacity: 1 }}
-          transition={{ duration: 1.5, ease: "easeInOut" }}
+          transition={{ duration: 1.5, ease: "easeInOut" }} // Reverted to 1.5s
         >
           <GlowingEyeParticles isDarkMode={isDarkMode} zoomActive={zoomActive} />
 
@@ -1314,7 +1308,7 @@ export default function App() {
             <motion.h1 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.2 }} // Reverted to 0.2s
               className="text-6xl md:text-8xl font-bold tracking-tight mb-4"
             >
               Hi, I'm Trenton!
@@ -1322,7 +1316,7 @@ export default function App() {
             <motion.p 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.4 }} // Reverted to 0.4s
               className={`text-xl md:text-2xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
             >
               welcome to my universe
@@ -1332,7 +1326,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
+            transition={{ delay: 1 }} // Reverted to 1s
             className={`absolute bottom-32 md:bottom-24 text-sm md:text-base hover:scale-110 transition-transform ${isDarkMode ? 'text-gray-500 hover:text-white' : 'text-gray-400 hover:text-black'}`}
             style={{ fontFamily: FONTS.accent }}
           >
@@ -1373,10 +1367,51 @@ export default function App() {
             </nav>
           </header>
 
-          {/* Dynamic Backgrounds Layer */}
-          {activeTab === 'Experiences' && <CanyonParticles isDarkMode={isDarkMode} />}
-          {activeTab === 'Portfolio' && <TorusFieldDynamics isDarkMode={isDarkMode} />}
-          {activeTab === 'Thoughts' && <VortexParticleSystem isDarkMode={isDarkMode} />}
+          {/* Dynamic Backgrounds Layer (Change 2: Added conditional rendering based on scroll for Experiences) */}
+          {activeTab === 'Experiences' && (
+            <AnimatePresence>
+              {scrolledDown && ( // Background only appears if user has scrolled down
+                <motion.div
+                  key="canyon-bg"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.0 }}
+                  className="fixed inset-0 pointer-events-none -z-10"
+                >
+                  <CanyonParticles isDarkMode={isDarkMode} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
+          {activeTab === 'Portfolio' && (
+            <AnimatePresence>
+              <motion.div
+                key="torus-bg"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="fixed inset-0 pointer-events-none -z-10"
+              >
+                <TorusFieldDynamics isDarkMode={isDarkMode} />
+              </motion.div>
+            </AnimatePresence>
+          )}
+          {activeTab === 'Thoughts' && (
+            <AnimatePresence>
+              <motion.div
+                key="vortex-bg"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="fixed inset-0 pointer-events-none -z-10"
+              >
+                <VortexParticleSystem isDarkMode={isDarkMode} />
+              </motion.div>
+            </AnimatePresence>
+          )}
 
           {/* Content Area */}
           <main className="flex-1 overflow-hidden relative mt-4 z-10">
@@ -1389,19 +1424,20 @@ export default function App() {
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -50, opacity: 0 }}
-                  className="h-full overflow-y-auto pb-20 scrollbar-hide custom-scroll relative"
+                  className="h-full overflow-y-auto pb-20 scrollbar-hide custom-scroll"
+                  ref={mainContentRef} // Added Ref (Change 2)
+                  onScroll={handleScroll} // Added Scroll Handler (Change 2)
                 >
-                    {/* NEW SECTION: Magazine Introduction (Blocks background) */}
-                    <IntroductionSection isDarkMode={isDarkMode} accentHex={accentHex} />
+                   {/* NEW SECTION: Magazine Introduction (Blocks background) */}
+                   <IntroductionSection isDarkMode={isDarkMode} accentHex={accentHex} />
 
-                    {/* RESUME SECTION (Transparent background reveals particles) */}
-                    <div className="relative min-h-full py-10 pl-4 md:pl-12 max-w-5xl mx-auto pt-20">
-                      
-                      {/* Timeline Line */}
-                      <div className={`absolute left-6 md:left-12 top-0 bottom-[100px] w-0.5 ${isDarkMode ? 'bg-stone-700' : 'bg-stone-300'}`} />
+                   <div className="relative min-h-full py-10 pl-4 md:pl-12">
+                     
+                     {/* Timeline Line */}
+                     <div className={`absolute left-6 md:left-12 top-0 bottom-[100px] w-0.5 ${isDarkMode ? 'bg-stone-700' : 'bg-stone-300'}`} />
 
-                      {EXPERIENCES.map((job) => (
-                        <ExperienceItem 
+                     {EXPERIENCES.map((job) => (
+                       <ExperienceItem 
                           key={job.id}
                           job={job}
                           isDarkMode={isDarkMode}
@@ -1410,12 +1446,12 @@ export default function App() {
                           onToggle={toggleExperience}
                           isHovered={hoveredExperienceId === job.id}
                           onHoverChange={setHoveredExperienceId}
-                        />
-                      ))}
-                    </div>
+                       />
+                     ))}
+                   </div>
 
-                    {/* Footer Section */}
-                    <div className="flex flex-col items-center justify-center pb-20 mt-4 px-4 md:px-12 relative z-10">
+                   {/* Footer Section */}
+                   <div className="flex flex-col items-center justify-center pb-20 mt-4 px-4 md:px-12">
                       <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -1454,7 +1490,7 @@ export default function App() {
                       <div className={`mt-12 text-xs font-mono opacity-40 ${isDarkMode ? 'text-stone-400' : 'text-stone-500'}`}>
                         © 2025 Trenton // Built with Starlight
                       </div>
-                    </div>
+                   </div>
 
                 </motion.div>
               )}
@@ -1504,4 +1540,3 @@ export default function App() {
     </div>
   );
 }
-
