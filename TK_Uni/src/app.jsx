@@ -49,8 +49,7 @@ const EXPERIENCES = [
         description: `• Led spectrum and operational licensing inputs for missions, coordinating with FCC, ITU, NTIA, NASA, DoD, and NOAA.
 • Served and Trained as Ground Control Operator for New Glenn’s first flight with the Blue Ring Payload.
 • Co‑designed an AI‑powered ops workflow, defining end‑to‑end architecture, agent interactions, and data‑flow schemas that embedded LLM toolchains into our ground system and reduced routine data‑validation tasks and accelerated mission tooling development. 
-• Wrote, tested, and executed  procedural documentation to be used to command and receive vehicle telemetry.
-• Architected a novel AI ground software platform to be automated into existing workflows.`,
+• Wrote, tested, and executed procedural documentation to be used to command and receive vehicle telemetry.',
         skills: [
           { name: "Spectrum Coordination", type: "technical-hardware" },
           { name: "AI R&D", type: "technical-hardware" },
@@ -155,6 +154,270 @@ const EXPERIENCES = [
     ]
   }
 ];
+
+
+// --- NEW COMPONENT: Artwork33 (The Helix Animation) ---
+const Artwork33 = ({ isDarkMode }) => {
+  const canvasRef = useRef(null);
+  const animationFrameRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    
+    // Handle High DPI displays
+    const dpr = window.devicePixelRatio || 1;
+    // We'll use the container's size
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    const width = rect.width;
+    const height = rect.height;
+
+    // Define colors based on isDarkMode
+    const bgColor = isDarkMode ? '#1a1a1a' : '#F0EEE6';
+    // Particle color base (dark in light mode, light in dark mode)
+    const pColor = isDarkMode ? { r: 200, g: 200, b: 200 } : { r: 10, g: 10, b: 10 };
+    // Line/Connection color base
+    const lColor = isDarkMode ? { r: 220, g: 220, b: 220 } : { r: 20, g: 20, b: 20 };
+
+    // Core variables
+    let time = 0;
+    const particles = [];
+    let helixPoints = [];
+    const numParticles = 60; // Fewer particles
+    const TWO_PI = Math.PI * 2;
+
+    // Helper functions
+    const random = (min, max) => {
+      if (max === undefined) {
+        max = min;
+        min = 0;
+      }
+      return Math.random() * (max - min) + min;
+    };
+
+    const map = (value, start1, stop1, start2, stop2) => {
+      return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    };
+
+    const dist = (x1, y1, z1, x2, y2, z2) => {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const dz = z2 - z1;
+      return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    };
+
+    // HelixParticle - each point balanced between opposing forces
+    class HelixParticle {
+      constructor(initialPhase) {
+        this.phase = initialPhase || random(TWO_PI);
+        this.radius = random(90, 110);
+        this.yOffset = random(-300, 300);
+        this.ySpeed = random(0.3, 0.6) * (random() > 0.5 ? 1 : -1);
+        this.rotationSpeed = random(0.005, 0.0075);
+        this.size = random(3, 6); // Slightly larger points
+        this.opacity = random(120, 180);
+        this.strength = random(0.8, 1);
+      }
+
+      update() {
+        // Update position - success and failure are one movement
+        this.phase += this.rotationSpeed * this.strength;
+        this.yOffset += this.ySpeed;
+
+        // Reset position if it goes off screen
+        if (this.yOffset > 350) this.yOffset = -350;
+        if (this.yOffset < -350) this.yOffset = 350;
+
+        // Calculate 3D position
+        const x = width / 2 + Math.cos(this.phase) * this.radius;
+        const y = height / 2 + this.yOffset;
+        const z = Math.sin(this.phase) * this.radius;
+
+        // Store position for drawing and connections
+        return { x, y, z, strength: this.strength, size: this.size, opacity: this.opacity };
+      }
+    }
+
+    // Create helix particles - fewer points
+    for (let i = 0; i < numParticles; i++) {
+      const initialPhase = (i / numParticles) * TWO_PI * 3; // Create 3 full rotations
+      particles.push(new HelixParticle(initialPhase));
+    }
+
+    // Frame rate control variables
+    const targetFPS = 30;
+    const frameInterval = 1000 / targetFPS;
+    let lastFrameTime = 0;
+
+    const animate = (currentTime) => {
+      if (!lastFrameTime) {
+        lastFrameTime = currentTime;
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      const deltaTime = currentTime - lastFrameTime;
+      
+      // Only render a new frame when enough time has passed (frame rate limiting)
+      if (deltaTime >= frameInterval) {
+        const remainder = deltaTime % frameInterval;
+        lastFrameTime = currentTime - remainder;
+        
+        // Clear background
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, width, height);
+
+        time += 0.02;
+
+        // Update helix points
+        helixPoints = particles.map(particle => particle.update());
+
+        // Find balance between foreground and background, like hope and fear
+        helixPoints.sort((a, b) => a.z - b.z);
+
+        // Draw stronger connections between helix points
+        ctx.lineWidth = 1.2; // Thicker lines
+
+        // Connect helix points to create a strand structure
+        for (let i = 0; i < helixPoints.length; i++) {
+          const hp1 = helixPoints[i];
+
+          // Connect to nearby points
+          for (let j = 0; j < helixPoints.length; j++) {
+            if (i !== j) {
+              const hp2 = helixPoints[j];
+              const d = dist(hp1.x, hp1.y, hp1.z, hp2.x, hp2.y, hp2.z);
+
+              // Create more connections with a larger distance threshold
+              if (d < 120) {
+                // Calculate opacity based on distance and z-position (depth)
+                const opacity = map(d, 0, 120, 40, 10) * map(Math.min(hp1.z, hp2.z), -110, 110, 0.3, 1);
+
+                ctx.strokeStyle = `rgba(${lColor.r}, ${lColor.g}, ${lColor.b}, ${opacity / 255})`;
+                ctx.beginPath();
+                ctx.moveTo(hp1.x, hp1.y);
+                ctx.lineTo(hp2.x, hp2.y);
+                ctx.stroke();
+              }
+            }
+          }
+        }
+
+        // Draw helix points with size based on z-position for 3D effect
+        for (let i = 0; i < helixPoints.length; i++) {
+          const hp = helixPoints[i];
+          // Calculate size and opacity based on z-position (depth)
+          const sizeMultiplier = map(hp.z, -110, 110, 0.6, 1.3);
+          const adjustedOpacity = map(hp.z, -110, 110, hp.opacity * 0.4, hp.opacity);
+
+          ctx.fillStyle = `rgba(${pColor.r}, ${pColor.g}, ${pColor.b}, ${adjustedOpacity / 255})`;
+          ctx.beginPath();
+          ctx.arc(hp.x, hp.y, (hp.size * sizeMultiplier) / 2, 0, TWO_PI);
+          ctx.fill();
+        }
+
+        // Create spinal connections - stronger central structure
+        // Spine color
+        const sStroke = isDarkMode ? 'rgba(255, 255, 255, 0.118)' : 'rgba(0, 0, 0, 0.118)';
+        ctx.strokeStyle = sStroke;
+        ctx.lineWidth = 2;
+
+        // Sort by y position for the spine
+        const sortedByY = [...helixPoints].sort((a, b) => a.y - b.y);
+
+        // Draw spine connecting points with similar y positions
+        for (let i = 0; i < sortedByY.length - 1; i++) {
+          const p1 = sortedByY[i];
+          const p2 = sortedByY[i + 1];
+
+          // Only connect if they're close in y position
+          if (Math.abs(p1.y - p2.y) < 30) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Request next frame
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    // Start the animation immediately with proper frame timing
+    animationFrameRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    };
+  }, [isDarkMode]);
+
+  return (
+    <div className="w-full h-[500px] flex items-center justify-center">
+      <div className="w-full h-full border-0 overflow-hidden">
+        <canvas ref={canvasRef} className="w-full h-full" />
+      </div>
+    </div>
+  );
+};
+
+// --- NEW COMPONENT: IntroductionSection ---
+const IntroductionSection = ({ isDarkMode, accentHex }) => {
+  return (
+    <div className={`relative w-full z-20 pt-16 pb-24 md:pt-24 md:pb-32 px-6 md:px-16 border-b-2 ${isDarkMode ? 'bg-[#1a1a1a] border-[#2d2d2d]' : 'bg-[#F0EEE6] border-[#d1d1d1]'}`}>
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        
+        {/* Left Column: Magazine-style Text */}
+        <div className="space-y-8 order-2 lg:order-1">
+           <div className="flex flex-col gap-2">
+             <span className="font-mono text-xs uppercase tracking-[0.3em] opacity-60" style={{ color: accentHex }}>
+               Career Trajectory
+             </span>
+             <h1 className="text-6xl md:text-7xl leading-none uppercase" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
+               Dynamic <br />
+               <span style={{ color: accentHex }}>Equilibrium</span>
+             </h1>
+           </div>
+
+           <div className={`text-lg md:text-xl leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
+             <p className="first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
+               The path of a mission is never a straight line. It is a series of calculated adjustments, finding balance between regulatory constraint and operational velocity. 
+             </p>
+             <p className="mt-4">
+               From the strict precision of NASA human spaceflight to the agile frontiers of commercial satellite constellations, my work exists at the intersection of hardware, software, and policy.
+             </p>
+           </div>
+           
+           <div className={`pl-6 border-l-4 italic ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
+              "Regulating the vacuum, programming the impossible."
+           </div>
+        </div>
+
+        {/* Right Column: Imagery/Animation */}
+        <div className="relative order-1 lg:order-2">
+          {/* Decorative Corner Frames */}
+          <div className={`absolute -top-4 -right-4 w-24 h-24 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+          <div className={`absolute -bottom-4 -left-4 w-24 h-24 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+          
+          <Artwork33 isDarkMode={isDarkMode} />
+          
+          <div className={`text-right text-xs font-mono mt-2 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+            Fig 1.0 — Opposing forces in perfect balance
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 
 // --- HELPER COMPONENTS ---
@@ -1126,15 +1389,19 @@ export default function App() {
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -50, opacity: 0 }}
-                  className="h-full overflow-y-auto pb-20 scrollbar-hide custom-scroll"
+                  className="h-full overflow-y-auto pb-20 scrollbar-hide custom-scroll relative"
                 >
-                   <div className="relative min-h-full py-10 pl-4 md:pl-12">
-                     
-                     {/* Timeline Line */}
-                     <div className={`absolute left-6 md:left-12 top-0 bottom-[100px] w-0.5 ${isDarkMode ? 'bg-stone-700' : 'bg-stone-300'}`} />
+                    {/* NEW SECTION: Magazine Introduction (Blocks background) */}
+                    <IntroductionSection isDarkMode={isDarkMode} accentHex={accentHex} />
 
-                     {EXPERIENCES.map((job) => (
-                       <ExperienceItem 
+                    {/* RESUME SECTION (Transparent background reveals particles) */}
+                    <div className="relative min-h-full py-10 pl-4 md:pl-12 max-w-5xl mx-auto pt-20">
+                      
+                      {/* Timeline Line */}
+                      <div className={`absolute left-6 md:left-12 top-0 bottom-[100px] w-0.5 ${isDarkMode ? 'bg-stone-700' : 'bg-stone-300'}`} />
+
+                      {EXPERIENCES.map((job) => (
+                        <ExperienceItem 
                           key={job.id}
                           job={job}
                           isDarkMode={isDarkMode}
@@ -1143,12 +1410,12 @@ export default function App() {
                           onToggle={toggleExperience}
                           isHovered={hoveredExperienceId === job.id}
                           onHoverChange={setHoveredExperienceId}
-                       />
-                     ))}
-                   </div>
+                        />
+                      ))}
+                    </div>
 
-                   {/* Footer Section */}
-                   <div className="flex flex-col items-center justify-center pb-20 mt-4 px-4 md:px-12">
+                    {/* Footer Section */}
+                    <div className="flex flex-col items-center justify-center pb-20 mt-4 px-4 md:px-12 relative z-10">
                       <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -1187,7 +1454,7 @@ export default function App() {
                       <div className={`mt-12 text-xs font-mono opacity-40 ${isDarkMode ? 'text-stone-400' : 'text-stone-500'}`}>
                         © 2025 Trenton // Built with Starlight
                       </div>
-                   </div>
+                    </div>
 
                 </motion.div>
               )}
@@ -1237,7 +1504,3 @@ export default function App() {
     </div>
   );
 }
-
-
-
-
