@@ -16,9 +16,8 @@ const EXPERIENCES = [
     role: "Regulatory Engineer",
     company: "PLANET",
     period: "Aug 2025 – Present",
-    description: `Develop and deliver domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.
-
-• Leading and supporting spectrum coordination with government and commercial users.
+    description: `Develop and deliver domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.`,
+    expandedContent: `• Leading and supporting spectrum coordination with government and commercial users.
 • Building domain specific tools to support licensing and coordination efforts.
 • Managing and tracking regulatory changes to assess impact on operations and future missions.`,
     skills: [
@@ -49,7 +48,7 @@ const EXPERIENCES = [
         description: `• Led spectrum and operational licensing inputs for missions, coordinating with FCC, ITU, NTIA, NASA, DoD, and NOAA.
 • Served and Trained as Ground Control Operator for New Glenn’s first flight with the Blue Ring Payload.
 • Co‑designed an AI‑powered ops workflow, defining end‑to‑end architecture, agent interactions, and data‑flow schemas that embedded LLM toolchains into our ground system and reduced routine data‑validation tasks and accelerated mission tooling development. 
-• Wrote, tested, and executed  procedural documentation to be used to command and receive vehicle telemetry.
+• Wrote, tested, and executed  procedural documentation to be used to command and receive vehicle telemetry.`,
         skills: [
           { name: "Spectrum Coordination", type: "technical-hardware" },
           { name: "AI R&D", type: "technical-hardware" },
@@ -62,9 +61,7 @@ const EXPERIENCES = [
         role: "Ground Data Systems Engineer",
         company: "BLUE ORIGIN",
         period: "Aug 2022 – Aug 2024",
-        description: '• Built and maintained Grafana/OpenC3 dashboards showing real-time state of vehicle telemetry and ground systems.
-• Supported AWS-based ground software (EKS, Docker, Kubernetes) across development, test, and flight environments.
-• Performed STK coverage analysis and coordinated with ground-station vendors on configuration and operations plans.`,
+        description: '• Built and maintained Grafana/OpenC3 dashboards showing real-time state of vehicle telemetry and ground systems. \n• Supported AWS-based ground software (EKS, Docker, Kubernetes) across development, test, and flight environments. \n• Performed STK coverage analysis and coordinated with ground-station vendors on configuration and operations plans.',
         skills: [
           { name: "Python", type: "technical-hardware" },
           { name: "Data Visualization", type: "technical-software" },
@@ -144,7 +141,8 @@ const EXPERIENCES = [
     role: "Delivery Experience Specialist",
     company: "TESLA",
     period: "Dec 2018 – Oct 2019; Mar 2020",
-    description: `• Guided customers through vehicle software features, controls, and basic maintenance at delivery.
+    description: `Orchestrated the end-to-end delivery experience for new Tesla owners, from vehicle inspection and preparation to final financing coordination and customer orientation.`,
+    expandedContent: `• Guided customers through vehicle software features, controls, and basic maintenance at delivery.
 • Coordinated financing terms and delivery paperwork, tracking status in Salesforce.
 • Inspected, prepared, and staged vehicles before hand-off, resolving straightforward issues and ensuring charge levels.`,
     skills: [
@@ -353,22 +351,22 @@ const Artwork33 = ({ isDarkMode }) => {
 // --- NEW COMPONENT: IntroductionSection ---
 const IntroductionSection = ({ isDarkMode, accentHex }) => {
   return (
-    <div className={`relative w-full z-20 pt-16 pb-24 md:pt-24 md:pb-32 px-6 md:px-16 border-b-2 ${isDarkMode ? 'bg-[#1a1a1a] border-[#2d2d2d]' : 'bg-[#F0EEE6] border-[#d1d1d1]'}`}>
+    <div className={`relative w-full z-20 pt-16 pb-24 md:pt-24 md:pb-32 px-4 md:px-16 border-b-2 ${isDarkMode ? 'bg-[#1a1a1a] border-[#2d2d2d]' : 'bg-[#F0EEE6] border-[#d1d1d1]'}`}>
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
         {/* Left Column: Magazine-style Text */}
-        <div className="space-y-8 order-2 lg:order-1">
+        <div className="space-y-8 order-2 lg:order-1 max-w-full">
            <div className="flex flex-col gap-2">
              <span className="font-mono text-xs uppercase tracking-[0.3em] opacity-60" style={{ color: accentHex }}>
                Career Trajectory
              </span>
-             <h1 className="text-6xl md:text-7xl leading-none uppercase" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
+             <h1 className="text-4xl sm:text-5xl md:text-7xl leading-none uppercase break-words" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
                Dynamic <br />
                <span style={{ color: accentHex }}>Equilibrium</span>
              </h1>
            </div>
 
-           <div className={`text-lg md:text-xl leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
+           <div className={`text-base md:text-xl leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
              <p className="first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
                The path of a mission is never a straight line. It is a series of calculated adjustments, finding balance between regulatory constraint and operational velocity. 
              </p>
@@ -454,6 +452,8 @@ const ExperienceItem = ({
   isHovered, 
   onHoverChange 
 }) => {
+  const hasExpandableContent = job.subExperiences || job.expandedContent;
+
   return (
     <div className="relative mb-16 group">
       {/* Timeline Node */}
@@ -465,7 +465,7 @@ const ExperienceItem = ({
       {/* Card Container */}
       <div 
         className={`
-          ml-8 p-6 md:p-8 rounded-3xl transition-all duration-300 border
+          ml-4 md:ml-8 p-5 md:p-8 rounded-3xl transition-all duration-300 border
           ${isDarkMode 
             ? 'bg-stone-900/80 border-stone-800 hover:border-[#F2D399]/50' 
             : 'bg-white/60 border-stone-200 hover:border-[#40382A]/50'}
@@ -473,11 +473,12 @@ const ExperienceItem = ({
         `}
         onMouseEnter={() => onHoverChange(job.id)}
         onMouseLeave={() => onHoverChange(null)}
+        onClick={() => onHoverChange(job.id)} // Ensures tap on mobile registers as interaction
       >
         {/* Header */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 gap-2">
           <div className="flex-1">
-            <h3 className="text-2xl font-bold">{job.role}</h3>
+            <h3 className="text-xl md:text-2xl font-bold">{job.role}</h3>
             <div className="font-bold tracking-wide text-sm uppercase mt-1" style={{ color: accentHex }}>{job.company}</div>
           </div>
           <div className="flex flex-col items-end gap-2">
@@ -485,9 +486,12 @@ const ExperienceItem = ({
               {job.period}
             </div>
             {/* Toggle Button */}
-            {job.subExperiences && (
+            {hasExpandableContent && (
               <motion.button
-                onClick={() => onToggle(job.id)}
+                onClick={(e) => {
+                   e.stopPropagation(); // Prevent double triggering if container also has click logic
+                   onToggle(job.id);
+                }}
                 className={`p-1 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10 text-stone-400' : 'hover:bg-black/5 text-stone-500'}`}
                 // Only animate if collapsed AND hovered
                 animate={(!isExpanded && isHovered) ? {
@@ -499,7 +503,14 @@ const ExperienceItem = ({
                 } : {
                   boxShadow: '0 0 0px rgba(0,0,0,0)'
                 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                // Conditional transition: fast exit (0.1s) when not hovered, slow loop (2s) when hovered
+                transition={(!isExpanded && isHovered) ? { 
+                  duration: 2, 
+                  repeat: Infinity, 
+                  ease: "easeInOut" 
+                } : { 
+                  duration: 0.1 
+                }}
               >
                 {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
               </motion.button>
@@ -516,9 +527,9 @@ const ExperienceItem = ({
           ))}
         </div>
 
-        {/* Nested Experiences */}
+        {/* Nested Experiences & Expanded Content */}
         <AnimatePresence>
-          {isExpanded && job.subExperiences && (
+          {isExpanded && hasExpandableContent && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
@@ -527,27 +538,40 @@ const ExperienceItem = ({
               className="overflow-hidden"
             >
               <div className={`relative mt-6 pt-6 border-t ${isDarkMode ? 'border-stone-800' : 'border-stone-200'}`}>
-                {/* Nested Timeline Line */}
-                <div className={`absolute left-1.5 top-10 bottom-6 w-0.5 ${isDarkMode ? 'bg-stone-800' : 'bg-stone-300'} opacity-50`} />
+                
+                {/* 1. Show simple expanded content (bullets) if available */}
+                {job.expandedContent && (
+                   <div className="pl-2">
+                      <DescriptionRenderer text={job.expandedContent} isDarkMode={isDarkMode} accentHex={accentHex} />
+                   </div>
+                )}
 
-                {job.subExperiences.map((subJob) => (
-                  <div key={subJob.id} className="relative pl-8 mb-8 last:mb-0">
-                    <div 
-                       className={`absolute left-0 top-2 w-3.5 h-3.5 rounded-full border-2 ${isDarkMode ? 'border-[#1a1a1a]' : 'border-[#f0f0e8]'}`}
-                       style={{ backgroundColor: accentHex }}
-                    />
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-1">
-                      <h4 className={`text-lg font-bold ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{subJob.role}</h4>
-                      <span className={`font-mono text-xs ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>{subJob.period}</span>
-                    </div>
-                    <DescriptionRenderer text={subJob.description} isDarkMode={isDarkMode} accentHex={accentHex} />
-                    <div className="flex flex-wrap gap-2">
-                      {subJob.skills.map((skill, idx) => (
-                        <SkillJewel key={idx} skill={skill} isDarkMode={isDarkMode} />
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                {/* 2. Show nested sub-experiences if available */}
+                {job.subExperiences && (
+                  <>
+                    {/* Nested Timeline Line */}
+                    <div className={`absolute left-1.5 top-10 bottom-6 w-0.5 ${isDarkMode ? 'bg-stone-800' : 'bg-stone-300'} opacity-50`} />
+
+                    {job.subExperiences.map((subJob) => (
+                      <div key={subJob.id} className="relative pl-6 md:pl-8 mb-8 last:mb-0">
+                        <div 
+                           className={`absolute left-0 top-2 w-3.5 h-3.5 rounded-full border-2 ${isDarkMode ? 'border-[#1a1a1a]' : 'border-[#f0f0e8]'}`}
+                           style={{ backgroundColor: accentHex }}
+                        />
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-2 gap-1">
+                          <h4 className={`text-base md:text-lg font-bold ${isDarkMode ? 'text-stone-200' : 'text-stone-800'}`}>{subJob.role}</h4>
+                          <span className={`font-mono text-xs ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>{subJob.period}</span>
+                        </div>
+                        <DescriptionRenderer text={subJob.description} isDarkMode={isDarkMode} accentHex={accentHex} />
+                        <div className="flex flex-wrap gap-2">
+                          {subJob.skills.map((skill, idx) => (
+                            <SkillJewel key={idx} skill={skill} isDarkMode={isDarkMode} />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
               </div>
             </motion.div>
           )}
@@ -1255,6 +1279,11 @@ export default function App() {
     document.head.appendChild(link);
   }, []);
 
+  // NEW: Effect to set BODY background color to prevent overscroll highlight on mobile
+  useEffect(() => {
+    document.body.style.backgroundColor = isDarkMode ? '#1a1a1a' : '#f0f0e8';
+  }, [isDarkMode]);
+
   // NEW: Scroll handler function (Change 2 - Retained)
   const handleScroll = () => {
     if (mainContentRef.current) {
@@ -1283,7 +1312,8 @@ export default function App() {
   const accentHex = isDarkMode ? '#F2D399' : '#40382A';
 
   return (
-    <div className={`relative w-full h-screen overflow-hidden transition-colors duration-500 ${themeClasses}`} style={{ fontFamily: FONTS.body }}>
+    // Changed h-screen to h-[100dvh] for better mobile viewport handling
+    <div className={`relative w-full h-[100dvh] overflow-hidden transition-colors duration-500 ${themeClasses}`} style={{ fontFamily: FONTS.body }}>
       
       {/* Controls */}
       <button 
@@ -1424,7 +1454,7 @@ export default function App() {
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -50, opacity: 0 }}
-                  className="h-full overflow-y-auto pb-20 scrollbar-hide custom-scroll"
+                  className="h-full overflow-y-auto overflow-x-hidden pb-20 scrollbar-hide custom-scroll"
                   ref={mainContentRef} // Added Ref (Change 2)
                   onScroll={handleScroll} // Added Scroll Handler (Change 2)
                 >
@@ -1540,4 +1570,3 @@ export default function App() {
     </div>
   );
 }
-
