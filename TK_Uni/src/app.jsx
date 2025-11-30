@@ -340,7 +340,8 @@ const Artwork33 = ({ isDarkMode }) => {
   }, [isDarkMode]);
 
   return (
-    <div className="w-full h-[500px] flex items-center justify-center">
+    // UPDATED: Height is now responsive (200px on mobile, 500px on md+)
+    <div className="w-full h-[200px] md:h-[500px] flex items-center justify-center">
       <div className="w-full h-full border-0 overflow-hidden">
         <canvas ref={canvasRef} className="w-full h-full" />
       </div>
@@ -351,44 +352,46 @@ const Artwork33 = ({ isDarkMode }) => {
 // --- NEW COMPONENT: IntroductionSection ---
 const IntroductionSection = ({ isDarkMode, accentHex }) => {
   return (
-    <div className={`relative w-full z-20 pt-16 pb-24 md:pt-24 md:pb-32 px-4 md:px-16 border-b-2 ${isDarkMode ? 'bg-[#1a1a1a] border-[#2d2d2d]' : 'bg-[#F0EEE6] border-[#d1d1d1]'}`}>
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+    <div className={`relative w-full z-20 pt-8 pb-12 md:pt-24 md:pb-32 px-4 md:px-16 border-b-2 ${isDarkMode ? 'bg-[#1a1a1a] border-[#2d2d2d]' : 'bg-[#F0EEE6] border-[#d1d1d1]'}`}>
+      {/* UPDATED: grid-cols-2 at all sizes, gap reduced for mobile */}
+      <div className="max-w-6xl mx-auto grid grid-cols-2 gap-3 md:gap-12 items-center">
         
-        {/* Left Column: Magazine-style Text */}
-        <div className="space-y-8 order-2 lg:order-1 max-w-full">
+        {/* Left Column: Magazine-style Text (removed order classes) */}
+        <div className="space-y-4 md:space-y-8 max-w-full">
            <div className="flex flex-col gap-2">
-             <span className="font-mono text-xs uppercase tracking-[0.3em] opacity-60" style={{ color: accentHex }}>
+             <span className="font-mono text-[0.6rem] md:text-xs uppercase tracking-[0.3em] opacity-60" style={{ color: accentHex }}>
                Career Trajectory
              </span>
-             <h1 className="text-4xl sm:text-5xl md:text-7xl leading-none uppercase break-words" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
+             {/* UPDATED: Typography scaling for mobile side-by-side */}
+             <h1 className="text-2xl sm:text-5xl md:text-7xl leading-none uppercase break-words" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
                Dynamic <br />
                <span style={{ color: accentHex }}>Equilibrium</span>
              </h1>
            </div>
 
-           <div className={`text-base md:text-xl leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
-             <p className="first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
+           <div className={`text-xs md:text-xl leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
+             <p className="first-letter:text-2xl md:first-letter:text-5xl first-letter:font-bold first-letter:mr-2 md:first-letter:mr-3 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
                The path of a mission is never a straight line. It is a series of calculated adjustments, finding balance between regulatory constraint and operational velocity. 
              </p>
-             <p className="mt-4">
+             <p className="mt-2 md:mt-4">
                From the strict precision of NASA human spaceflight to the agile frontiers of commercial satellite constellations, my work exists at the intersection of hardware, software, and policy.
              </p>
            </div>
            
-           <div className={`pl-6 border-l-4 italic ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
+           <div className={`pl-3 md:pl-6 border-l-2 md:border-l-4 italic text-xs md:text-base ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
               "Regulating the vacuum, programming the impossible."
            </div>
         </div>
 
-        {/* Right Column: Imagery/Animation */}
-        <div className="relative order-1 lg:order-2">
+        {/* Right Column: Imagery/Animation (removed order classes) */}
+        <div className="relative">
           {/* Decorative Corner Frames */}
-          <div className={`absolute -top-4 -right-4 w-24 h-24 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-          <div className={`absolute -bottom-4 -left-4 w-24 h-24 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+          <div className={`absolute -top-2 -right-2 md:-top-4 md:-right-4 w-12 h-12 md:w-24 md:h-24 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+          <div className={`absolute -bottom-2 -left-2 md:-bottom-4 md:-left-4 w-12 h-12 md:w-24 md:h-24 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
           
           <Artwork33 isDarkMode={isDarkMode} />
           
-          <div className={`text-right text-xs font-mono mt-2 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+          <div className={`text-right text-[0.5rem] md:text-xs font-mono mt-1 md:mt-2 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
             Fig 1.0 — Opposing forces in perfect balance
           </div>
         </div>
