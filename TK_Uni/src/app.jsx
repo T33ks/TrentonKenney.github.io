@@ -159,8 +159,6 @@ const Artwork33 = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
   const animationFrameRef = useRef(null);
   
-  // --- SETTING: ANIMATION SPEED ---
-  // Lower this number to slow it down (e.g., 0.5 is half speed, 0.2 is very slow)
   const ANIMATION_SPEED_FACTOR = 0.3; 
 
   useEffect(() => {
@@ -179,19 +177,16 @@ const Artwork33 = ({ isDarkMode }) => {
     const width = rect.width;
     const height = rect.height;
 
-    // Define colors based on isDarkMode
     const bgColor = isDarkMode ? '#1a1a1a' : '#F0EEE6';
     const pColor = isDarkMode ? { r: 200, g: 200, b: 200 } : { r: 10, g: 10, b: 10 };
     const lColor = isDarkMode ? { r: 220, g: 220, b: 220 } : { r: 20, g: 20, b: 20 };
 
-    // Core variables
     let time = 0;
     const particles = [];
     let helixPoints = [];
-    const numParticles = 60; // Fewer particles
+    const numParticles = 60; 
     const TWO_PI = Math.PI * 2;
 
-    // Helper functions
     const random = (min, max) => {
       if (max === undefined) {
         max = min;
@@ -211,29 +206,32 @@ const Artwork33 = ({ isDarkMode }) => {
       return Math.sqrt(dx * dx + dy * dy + dz * dz);
     };
 
-    // HelixParticle
+    // --- UPDATED SCALE LOGIC ---
+    // Ensure the helix fits within the canvas width by scaling radius based on width
+    // Mobile screens are narrow, so we reduce the radius significantly
+    const minDimension = Math.min(width, height);
+    const baseRadius = minDimension * 0.25; // Use 25% of the smallest dimension
+    const baseSizeScale = width < 500 ? 0.6 : 1.0;
+
     class HelixParticle {
       constructor(initialPhase) {
         this.phase = initialPhase || random(TWO_PI);
-        this.radius = random(90, 110);
+        this.radius = random(baseRadius * 0.9, baseRadius * 1.1);
         this.yOffset = random(-300, 300);
         this.ySpeed = random(0.3, 0.6) * (random() > 0.5 ? 1 : -1);
         this.rotationSpeed = random(0.005, 0.0075);
-        this.size = random(3, 6); 
+        this.size = random(3, 6) * baseSizeScale; 
         this.opacity = random(120, 180);
         this.strength = random(0.8, 1);
       }
 
       update() {
-        // Apply Speed Factor here
         this.phase += (this.rotationSpeed * this.strength) * ANIMATION_SPEED_FACTOR;
         this.yOffset += this.ySpeed * ANIMATION_SPEED_FACTOR;
 
-        // Reset position if it goes off screen
         if (this.yOffset > 350) this.yOffset = -350;
         if (this.yOffset < -350) this.yOffset = 350;
 
-        // Calculate 3D position
         const x = width / 2 + Math.cos(this.phase) * this.radius;
         const y = height / 2 + this.yOffset;
         const z = Math.sin(this.phase) * this.radius;
@@ -242,7 +240,6 @@ const Artwork33 = ({ isDarkMode }) => {
       }
     }
 
-    // Create helix particles
     for (let i = 0; i < numParticles; i++) {
       const initialPhase = (i / numParticles) * TWO_PI * 3; 
       particles.push(new HelixParticle(initialPhase));
@@ -265,17 +262,14 @@ const Artwork33 = ({ isDarkMode }) => {
         const remainder = deltaTime % frameInterval;
         lastFrameTime = currentTime - remainder;
         
-        // Clear background
         ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, width, height);
 
         time += 0.02 * ANIMATION_SPEED_FACTOR;
 
-        // Update helix points
         helixPoints = particles.map(particle => particle.update());
         helixPoints.sort((a, b) => a.z - b.z);
 
-        // Connections
         ctx.lineWidth = 1.2;
         for (let i = 0; i < helixPoints.length; i++) {
           const hp1 = helixPoints[i];
@@ -284,8 +278,11 @@ const Artwork33 = ({ isDarkMode }) => {
               const hp2 = helixPoints[j];
               const d = dist(hp1.x, hp1.y, hp1.z, hp2.x, hp2.y, hp2.z);
 
-              if (d < 120) {
-                const opacity = map(d, 0, 120, 40, 10) * map(Math.min(hp1.z, hp2.z), -110, 110, 0.3, 1);
+              // Scale connection distance proportional to radius to keep clean look
+              const connectionThreshold = baseRadius * 1.5;
+
+              if (d < connectionThreshold) {
+                const opacity = map(d, 0, connectionThreshold, 40, 10) * map(Math.min(hp1.z, hp2.z), -110, 110, 0.3, 1);
                 ctx.strokeStyle = `rgba(${lColor.r}, ${lColor.g}, ${lColor.b}, ${opacity / 255})`;
                 ctx.beginPath();
                 ctx.moveTo(hp1.x, hp1.y);
@@ -296,7 +293,6 @@ const Artwork33 = ({ isDarkMode }) => {
           }
         }
 
-        // Draw helix points
         for (let i = 0; i < helixPoints.length; i++) {
           const hp = helixPoints[i];
           const sizeMultiplier = map(hp.z, -110, 110, 0.6, 1.3);
@@ -308,7 +304,6 @@ const Artwork33 = ({ isDarkMode }) => {
           ctx.fill();
         }
 
-        // Spine
         const sStroke = isDarkMode ? 'rgba(255, 255, 255, 0.118)' : 'rgba(0, 0, 0, 0.118)';
         ctx.strokeStyle = sStroke;
         ctx.lineWidth = 2;
@@ -340,8 +335,7 @@ const Artwork33 = ({ isDarkMode }) => {
   }, [isDarkMode]);
 
   return (
-    // UPDATED: Height is now responsive (200px on mobile, 500px on md+)
-    <div className="w-full h-[200px] md:h-[500px] flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center">
       <div className="w-full h-full border-0 overflow-hidden">
         <canvas ref={canvasRef} className="w-full h-full" />
       </div>
@@ -353,49 +347,85 @@ const Artwork33 = ({ isDarkMode }) => {
 const IntroductionSection = ({ isDarkMode, accentHex }) => {
   return (
     <div className={`relative w-full z-20 pt-8 pb-12 md:pt-24 md:pb-32 px-4 md:px-16 border-b-2 ${isDarkMode ? 'bg-[#1a1a1a] border-[#2d2d2d]' : 'bg-[#F0EEE6] border-[#d1d1d1]'}`}>
-      {/* UPDATED: grid-cols-2 at all sizes, gap reduced for mobile */}
-      <div className="max-w-6xl mx-auto grid grid-cols-2 gap-3 md:gap-12 items-center">
-        
-        {/* Left Column: Magazine-style Text (removed order classes) */}
-        <div className="space-y-4 md:space-y-8 max-w-full">
+      
+      {/* DESKTOP LAYOUT (Grid) */}
+      <div className="hidden md:grid max-w-6xl mx-auto grid-cols-2 gap-12 items-center">
+        {/* Left: Text */}
+        <div className="space-y-8">
            <div className="flex flex-col gap-2">
-             <span className="font-mono text-[0.6rem] md:text-xs uppercase tracking-[0.3em] opacity-60" style={{ color: accentHex }}>
+             <span className="font-mono text-xs uppercase tracking-[0.3em] opacity-60" style={{ color: accentHex }}>
                Career Trajectory
              </span>
-             {/* UPDATED: Typography scaling for mobile side-by-side */}
-             <h1 className="text-2xl sm:text-5xl md:text-7xl leading-none uppercase break-words" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
+             <h1 className="text-7xl leading-none uppercase" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
                Dynamic <br />
                <span style={{ color: accentHex }}>Equilibrium</span>
              </h1>
            </div>
-
-           <div className={`text-xs md:text-xl leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
-             <p className="first-letter:text-2xl md:first-letter:text-5xl first-letter:font-bold first-letter:mr-2 md:first-letter:mr-3 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
+           <div className={`text-xl leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
+             <p className="first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
                The path of a mission is never a straight line. It is a series of calculated adjustments, finding balance between regulatory constraint and operational velocity. 
              </p>
-             <p className="mt-2 md:mt-4">
+             <p className="mt-4">
                From the strict precision of NASA human spaceflight to the agile frontiers of commercial satellite constellations, my work exists at the intersection of hardware, software, and policy.
              </p>
            </div>
-           
-           <div className={`pl-3 md:pl-6 border-l-2 md:border-l-4 italic text-xs md:text-base ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
+           <div className={`pl-6 border-l-4 italic ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
               "Regulating the vacuum, programming the impossible."
            </div>
         </div>
-
-        {/* Right Column: Imagery/Animation (removed order classes) */}
-        <div className="relative">
-          {/* Decorative Corner Frames */}
-          <div className={`absolute -top-2 -right-2 md:-top-4 md:-right-4 w-12 h-12 md:w-24 md:h-24 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-          <div className={`absolute -bottom-2 -left-2 md:-bottom-4 md:-left-4 w-12 h-12 md:w-24 md:h-24 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-          
+        {/* Right: Animation */}
+        <div className="relative h-[500px]">
+          <div className={`absolute -top-4 -right-4 w-24 h-24 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+          <div className={`absolute -bottom-4 -left-4 w-24 h-24 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
           <Artwork33 isDarkMode={isDarkMode} />
-          
-          <div className={`text-right text-[0.5rem] md:text-xs font-mono mt-1 md:mt-2 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+          <div className={`text-right text-xs font-mono mt-2 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
             Fig 1.0 — Opposing forces in perfect balance
           </div>
         </div>
       </div>
+
+      {/* MOBILE LAYOUT (Block with Float) */}
+      <div className="md:hidden block clearfix">
+        {/* Header Block (Full Width) */}
+        <div className="mb-6">
+           <span className="font-mono text-[0.65rem] uppercase tracking-[0.3em] opacity-60 block mb-1" style={{ color: accentHex }}>
+             Career Trajectory
+           </span>
+           <h1 className="text-4xl sm:text-5xl leading-none uppercase break-words" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
+             Dynamic <br />
+             <span style={{ color: accentHex }}>Equilibrium</span>
+           </h1>
+        </div>
+
+        {/* Content Container */}
+        <div className="relative">
+          {/* Floated Animation */}
+          <div className="float-right w-[45%] h-[200px] ml-4 mb-2 relative">
+             <div className={`absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+             <div className={`absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+             <Artwork33 isDarkMode={isDarkMode} />
+          </div>
+
+          {/* Text Wrapping Around */}
+          <div className={`text-sm leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
+             <p className="first-letter:text-4xl first-letter:font-bold first-letter:mr-2 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
+               The path of a mission is never a straight line. It is a series of calculated adjustments, finding balance between regulatory constraint and operational velocity. 
+             </p>
+             <p className="mt-4">
+               From the strict precision of NASA human spaceflight to the agile frontiers of commercial satellite constellations, my work exists at the intersection of hardware, software, and policy.
+             </p>
+             <div className={`mt-6 pl-3 border-l-2 italic text-xs ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
+                "Regulating the vacuum, programming the impossible."
+             </div>
+          </div>
+        </div>
+        
+        {/* Caption below everything on mobile */}
+        <div className={`text-right text-[0.6rem] font-mono mt-4 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+            Fig 1.0 — Opposing forces in perfect balance
+        </div>
+      </div>
+
     </div>
   );
 };
@@ -1568,6 +1598,11 @@ export default function App() {
         }
         .custom-scroll {
            mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%);
+        }
+        .clearfix::after {
+          content: "";
+          clear: both;
+          display: table;
         }
       `}</style>
     </div>
