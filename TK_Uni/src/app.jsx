@@ -207,10 +207,8 @@ const Artwork33 = ({ isDarkMode }) => {
     };
 
     // --- UPDATED SCALE LOGIC ---
-    // Ensure the helix fits within the canvas width by scaling radius based on width
-    // Mobile screens are narrow, so we reduce the radius significantly
     const minDimension = Math.min(width, height);
-    const baseRadius = minDimension * 0.25; // Use 25% of the smallest dimension
+    const baseRadius = minDimension * 0.25; 
     const baseSizeScale = width < 500 ? 0.6 : 1.0;
 
     class HelixParticle {
@@ -278,7 +276,7 @@ const Artwork33 = ({ isDarkMode }) => {
               const hp2 = helixPoints[j];
               const d = dist(hp1.x, hp1.y, hp1.z, hp2.x, hp2.y, hp2.z);
 
-              // Scale connection distance proportional to radius to keep clean look
+              // Scale connection distance proportional to radius
               const connectionThreshold = baseRadius * 1.5;
 
               if (d < connectionThreshold) {
@@ -399,11 +397,19 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
 
         {/* Content Container */}
         <div className="relative">
-          {/* Floated Animation */}
-          <div className="float-right w-[45%] h-[200px] ml-4 mb-2 relative">
-             <div className={`absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-             <div className={`absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-             <Artwork33 isDarkMode={isDarkMode} />
+          {/* Floated Animation Box */}
+          {/* UPDATED: Increased margins (ml-6, mb-6) and moved Caption INSIDE the floated div */}
+          <div className="float-right w-[50%] h-auto ml-6 mb-6 relative">
+             <div className="h-[200px] relative w-full">
+                <div className={`absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+                <div className={`absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+                <Artwork33 isDarkMode={isDarkMode} />
+             </div>
+             
+             {/* Caption moved here - directly inside floated element */}
+             <div className={`text-right text-[0.6rem] font-mono mt-2 opacity-50 leading-tight ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+                Fig 1.0 — Opposing forces in perfect balance
+             </div>
           </div>
 
           {/* Text Wrapping Around */}
@@ -418,11 +424,6 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
                 "Regulating the vacuum, programming the impossible."
              </div>
           </div>
-        </div>
-        
-        {/* Caption below everything on mobile */}
-        <div className={`text-right text-[0.6rem] font-mono mt-4 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
-            Fig 1.0 — Opposing forces in perfect balance
         </div>
       </div>
 
