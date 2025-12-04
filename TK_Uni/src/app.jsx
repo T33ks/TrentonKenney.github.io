@@ -154,14 +154,12 @@ const EXPERIENCES = [
 ];
 
 
-// --- NEW COMPONENT: SignalToNoise (Replaces Artwork33) ---
-// Theme: Scientific observation of emerging order.
-// Visualization: An analog spectrum analyzer display.
-// Particles represent raw sensor data, visualized with a graticule overlay and dynamic readouts.
-
-const SignalToNoise = () => {
+// --- NEW COMPONENT: Artwork33 (The Helix Animation) ---
+const Artwork33 = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
-  const animationRef = useRef(null);
+  const animationFrameRef = useRef(null);
+  
+  const ANIMATION_SPEED_FACTOR = 0.3; 
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -169,180 +167,176 @@ const SignalToNoise = () => {
 
     const ctx = canvas.getContext('2d');
     
-    // High DPI setup
+    // Handle High DPI displays
     const dpr = window.devicePixelRatio || 1;
-    const size = 550;
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    canvas.style.width = `${size}px`;
-    canvas.style.height = `${size}px`;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
 
-    // Configuration
-    const config = {
-      particleCount: 8000,
-      layers: 25,           
-      amplitude: 50,        
-      frequency: 0.015,     
-      speed: 0.2,
-      noiseStrength: 100,
-      margin: 80,
-      drag: 0.05,           // Slightly tighter drag for "instrumentation" feel
-      trailLength: 0.15,    // Shorter trails for a faster "refresh rate" look
-    };
+    const width = rect.width;
+    const height = rect.height;
 
-    // Initialize Particles
-    const particles = [];
-    for (let i = 0; i < config.particleCount; i++) {
-      const layerIndex = Math.floor(Math.random() * config.layers);
-      particles.push({
-        x: Math.random() * size,
-        y: size / 2, 
-        layer: layerIndex,
-        z: Math.random(),
-        vx: config.speed * (0.5 + Math.random() * 0.5),
-        driftOffset: Math.random() * Math.PI * 2,
-        size: Math.random() < 0.9 ? 1 : 1.5,
-        baseAlpha: 0.2 + Math.random() * 0.6,
-      });
-    }
+    const bgColor = isDarkMode ? '#1a1a1a' : '#F0EEE6';
+    const pColor = isDarkMode ? { r: 200, g: 200, b: 200 } : { r: 10, g: 10, b: 10 };
+    const lColor = isDarkMode ? { r: 220, g: 220, b: 220 } : { r: 20, g: 20, b: 20 };
 
     let time = 0;
-    let scanLineX = 0;
+    const particles = [];
+    let helixPoints = [];
+    const numParticles = 60; 
+    const TWO_PI = Math.PI * 2;
 
-    const drawGrid = (ctx, size, clarity) => {
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = `rgba(0, 0, 0, ${0.05 + clarity * 0.05})`; // Grid gets darker with signal
-      
-      // Vertical Lines
-      for (let i = 0; i <= size; i += 55) {
-        ctx.beginPath();
-        ctx.moveTo(i, 0);
-        ctx.lineTo(i, size);
-        // Dashed look
-        ctx.setLineDash([2, 4]);
-        ctx.stroke();
+    const random = (min, max) => {
+      if (max === undefined) {
+        max = min;
+        min = 0;
       }
-      
-      // Horizontal Lines
-      for (let i = 0; i <= size; i += 55) {
-        ctx.beginPath();
-        ctx.moveTo(0, i);
-        ctx.lineTo(size, i);
-        ctx.stroke();
+      return Math.random() * (max - min) + min;
+    };
+
+    const map = (value, start1, stop1, start2, stop2) => {
+      return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    };
+
+    const dist = (x1, y1, z1, x2, y2, z2) => {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const dz = z2 - z1;
+      return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    };
+
+    // --- UPDATED SCALE LOGIC ---
+    const minDimension = Math.min(width, height);
+    const baseRadius = minDimension * 0.25; 
+    const baseSizeScale = width < 500 ? 0.6 : 1.0;
+
+    class HelixParticle {
+      constructor(initialPhase) {
+        this.phase = initialPhase || random(TWO_PI);
+        this.radius = random(baseRadius * 0.9, baseRadius * 1.1);
+        this.yOffset = random(-300, 300);
+        this.ySpeed = random(0.3, 0.6) * (random() > 0.5 ? 1 : -1);
+        this.rotationSpeed = random(0.005, 0.0075);
+        this.size = random(3, 6) * baseSizeScale; 
+        this.opacity = random(120, 180);
+        this.strength = random(0.8, 1);
       }
-      ctx.setLineDash([]); // Reset
 
-      // Center Crosshair
-      ctx.strokeStyle = `rgba(0, 0, 0, 0.2)`;
-      ctx.beginPath();
-      ctx.moveTo(size / 2, size / 2 - 10);
-      ctx.lineTo(size / 2, size / 2 + 10);
-      ctx.moveTo(size / 2 - 10, size / 2);
-      ctx.lineTo(size / 2 + 10, size / 2);
-      ctx.stroke();
-    };
+      update() {
+        this.phase += (this.rotationSpeed * this.strength) * ANIMATION_SPEED_FACTOR;
+        this.yOffset += this.ySpeed * ANIMATION_SPEED_FACTOR;
 
-    const drawOverlay = (ctx, size, clarity, time) => {
-      // Monospace Font for scientific feel
-      ctx.font = '10px "Courier New", monospace';
-      ctx.fillStyle = 'rgba(40, 40, 40, 0.7)';
-      ctx.textAlign = 'left';
+        if (this.yOffset > 350) this.yOffset = -350;
+        if (this.yOffset < -350) this.yOffset = 350;
 
-      // Simulated Data
-      const noiseFloor = (-60 + (1 - clarity) * 20).toFixed(1);
-      const freq = (440 + clarity * 10 + Math.sin(time) * 5).toFixed(2);
-      const signalLock = clarity > 0.8 ? "LOCKED" : "SEARCHING...";
+        const x = width / 2 + Math.cos(this.phase) * this.radius;
+        const y = height / 2 + this.yOffset;
+        const z = Math.sin(this.phase) * this.radius;
 
-      ctx.fillText(`FREQ: ${freq} Hz`, 20, 30);
-      ctx.fillText(`NOISE FLOOR: ${noiseFloor} dB`, 20, 45);
-      ctx.fillText(`STATUS: ${signalLock}`, 20, 60);
+        return { x, y, z, strength: this.strength, size: this.size, opacity: this.opacity };
+      }
+    }
 
-      // Bottom Axis
-      ctx.textAlign = 'right';
-      ctx.fillText(`T+${time.toFixed(2)}s`, size - 20, size - 20);
+    for (let i = 0; i < numParticles; i++) {
+      const initialPhase = (i / numParticles) * TWO_PI * 3; 
+      particles.push(new HelixParticle(initialPhase));
+    }
+
+    const targetFPS = 30;
+    const frameInterval = 1000 / targetFPS;
+    let lastFrameTime = 0;
+
+    const animate = (currentTime) => {
+      if (!lastFrameTime) {
+        lastFrameTime = currentTime;
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      const deltaTime = currentTime - lastFrameTime;
       
-      // Vertical Scan Line (Refresh Bar)
-      scanLineX = (scanLineX + 2) % size;
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.beginPath();
-      ctx.moveTo(scanLineX, 0);
-      ctx.lineTo(scanLineX, size);
-      ctx.stroke();
+      if (deltaTime >= frameInterval) {
+        const remainder = deltaTime % frameInterval;
+        lastFrameTime = currentTime - remainder;
+        
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, width, height);
+
+        time += 0.02 * ANIMATION_SPEED_FACTOR;
+
+        helixPoints = particles.map(particle => particle.update());
+        helixPoints.sort((a, b) => a.z - b.z);
+
+        ctx.lineWidth = 1.2;
+        for (let i = 0; i < helixPoints.length; i++) {
+          const hp1 = helixPoints[i];
+          for (let j = 0; j < helixPoints.length; j++) {
+            if (i !== j) {
+              const hp2 = helixPoints[j];
+              const d = dist(hp1.x, hp1.y, hp1.z, hp2.x, hp2.y, hp2.z);
+
+              // Scale connection distance proportional to radius
+              const connectionThreshold = baseRadius * 1.5;
+
+              if (d < connectionThreshold) {
+                const opacity = map(d, 0, connectionThreshold, 40, 10) * map(Math.min(hp1.z, hp2.z), -110, 110, 0.3, 1);
+                ctx.strokeStyle = `rgba(${lColor.r}, ${lColor.g}, ${lColor.b}, ${opacity / 255})`;
+                ctx.beginPath();
+                ctx.moveTo(hp1.x, hp1.y);
+                ctx.lineTo(hp2.x, hp2.y);
+                ctx.stroke();
+              }
+            }
+          }
+        }
+
+        for (let i = 0; i < helixPoints.length; i++) {
+          const hp = helixPoints[i];
+          const sizeMultiplier = map(hp.z, -110, 110, 0.6, 1.3);
+          const adjustedOpacity = map(hp.z, -110, 110, hp.opacity * 0.4, hp.opacity);
+
+          ctx.fillStyle = `rgba(${pColor.r}, ${pColor.g}, ${pColor.b}, ${adjustedOpacity / 255})`;
+          ctx.beginPath();
+          ctx.arc(hp.x, hp.y, (hp.size * sizeMultiplier) / 2, 0, TWO_PI);
+          ctx.fill();
+        }
+
+        const sStroke = isDarkMode ? 'rgba(255, 255, 255, 0.118)' : 'rgba(0, 0, 0, 0.118)';
+        ctx.strokeStyle = sStroke;
+        ctx.lineWidth = 2;
+        const sortedByY = [...helixPoints].sort((a, b) => a.y - b.y);
+
+        for (let i = 0; i < sortedByY.length - 1; i++) {
+          const p1 = sortedByY[i];
+          const p2 = sortedByY[i + 1];
+
+          if (Math.abs(p1.y - p2.y) < 30) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      }
+      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    const draw = () => {
-      time += 0.01;
-
-      // 1. Trails Effect (Analog Persistence)
-      ctx.fillStyle = `rgba(240, 238, 230, ${config.trailLength})`; 
-      ctx.fillRect(0, 0, size, size);
-
-      // 2. Calculate "Clarity" Cycle
-      const cycle = Math.sin(time * 0.3); 
-      const rawClarity = (cycle + 1) / 2;
-      const clarity = rawClarity * rawClarity * (3 - 2 * rawClarity);
-
-      // 3. Draw Grid (Behind particles but visible)
-      drawGrid(ctx, size, clarity);
-
-      // 4. Update and Draw Particles
-      ctx.fillStyle = '#2A2A2A';
-
-      particles.forEach(p => {
-        // Move Horizontal
-        p.x += p.vx;
-        if (p.x > size) p.x = -10;
-
-        // Target Calculation
-        const layerY = config.margin + (p.layer / (config.layers - 1)) * (size - config.margin * 2);
-
-        // Signal: Coherent Waves
-        const signalPhase = time + (p.layer * 0.15); 
-        const waveY = Math.sin(p.x * config.frequency + signalPhase) * config.amplitude;
-        
-        // Noise: "Sensor Jitter"
-        // Using Math.tan occasionally or sharper noise for "electronic" feel
-        const noiseY = Math.sin(time * 5 + p.driftOffset) * config.noiseStrength + 
-                       Math.cos(p.x * 0.1) * (config.noiseStrength * 0.5);
-        
-        const targetY = layerY + waveY * clarity + noiseY * (1 - clarity);
-
-        // Physics
-        p.y += (targetY - p.y) * config.drag;
-
-        // Draw with "Phosphor" intensity
-        // Signal = sharper, darker. Noise = fuzzier.
-        const stateAlpha = 0.3 + 0.7 * clarity; 
-        ctx.globalAlpha = p.baseAlpha * p.z * stateAlpha;
-        
-        ctx.fillRect(p.x, p.y, p.size, p.size);
-      });
-
-      ctx.globalAlpha = 1.0;
-
-      // 5. Draw UI Overlay (On top of glass)
-      drawOverlay(ctx, size, clarity, time);
-
-      animationRef.current = requestAnimationFrame(draw);
-    };
-
-    draw();
+    animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
     };
-  }, []);
+  }, [isDarkMode]);
 
   return (
-    <div className="flex justify-center items-center h-full w-full bg-[#F0EEE6]">
-      <canvas 
-        ref={canvasRef} 
-        className="shadow-lg border border-gray-300" // Added subtle border for equipment feel
-        style={{ width: '550px', height: '550px' }}
-      />
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full h-full border-0 overflow-hidden">
+        <canvas ref={canvasRef} className="w-full h-full" />
+      </div>
     </div>
   );
 };
@@ -381,10 +375,7 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
         <div className="relative h-[500px]">
           <div className={`absolute -top-4 -right-4 w-24 h-24 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
           <div className={`absolute -bottom-4 -left-4 w-24 h-24 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-          
-          {/* REPLACED COMPONENT */}
-          <SignalToNoise />
-
+          <Artwork33 isDarkMode={isDarkMode} />
           <div className={`text-right text-xs font-mono mt-2 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
             Fig 1.0 — Opposing forces in perfect balance
           </div>
@@ -409,14 +400,10 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
           {/* Floated Animation Box */}
           {/* UPDATED: Increased margins (ml-6, mb-6) and moved Caption INSIDE the floated div */}
           <div className="float-right w-[50%] h-auto ml-6 mb-6 relative">
-             <div className="h-[200px] relative w-full overflow-hidden">
+             <div className="h-[200px] relative w-full">
                 <div className={`absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
                 <div className={`absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-                
-                {/* REPLACED COMPONENT */}
-                <div className="scale-[0.4] origin-top-right">
-                  <SignalToNoise />
-                </div>
+                <Artwork33 isDarkMode={isDarkMode} />
              </div>
              
              {/* Caption moved here - directly inside floated element */}
