@@ -159,11 +159,19 @@ const EXPERIENCES = [
 // Theme: Scientific observation of emerging order.
 // Visualization: An analog spectrum analyzer display.
 // Particles represent raw sensor data, visualized with a graticule overlay and dynamic readouts.
-// Updates: Transparent background, Robust Scaling (ResizeObserver), Continuous Scan.
+// Updates: Transparent background, Robust Scaling (ResizeObserver), Continuous Scan, DARK MODE SUPPORT.
 
-const SignalToNoise = () => {
+const SignalToNoise = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
+  
+  // Use a ref for theme so the loop can access current state without restarting
+  const themeRef = useRef(isDarkMode);
+
+  // Update theme ref whenever prop changes
+  useEffect(() => {
+    themeRef.current = isDarkMode;
+  }, [isDarkMode]);
   
   // Use refs for mutable state to avoid re-triggering effects on resize
   const stateRef = useRef({
@@ -249,9 +257,12 @@ const SignalToNoise = () => {
     // Initial resize trigger
     handleResize();
 
-    const drawGrid = (ctx, w, h, clarity) => {
+    const drawGrid = (ctx, w, h, clarity, isDark) => {
       ctx.lineWidth = 1;
-      ctx.strokeStyle = `rgba(0, 0, 0, ${0.05 + clarity * 0.05})`;
+      
+      // Grid Color Logic: Dark mode needs white/light lines, Light mode needs black/dark lines
+      const strokeBase = isDark ? '255, 255, 255' : '0, 0, 0';
+      ctx.strokeStyle = `rgba(${strokeBase}, ${0.05 + clarity * 0.05})`;
       
       const gridSize = 55;
       
@@ -274,7 +285,7 @@ const SignalToNoise = () => {
       ctx.setLineDash([]); // Reset
 
       // Center Crosshair
-      ctx.strokeStyle = `rgba(0, 0, 0, 0.2)`;
+      ctx.strokeStyle = `rgba(${strokeBase}, 0.2)`;
       ctx.beginPath();
       ctx.moveTo(w / 2, h / 2 - 10);
       ctx.lineTo(w / 2, h / 2 + 10);
@@ -283,9 +294,10 @@ const SignalToNoise = () => {
       ctx.stroke();
     };
 
-    const drawOverlay = (ctx, w, h, clarity, time) => {
+    const drawOverlay = (ctx, w, h, clarity, time, isDark) => {
       ctx.font = '10px "Courier New", monospace';
-      ctx.fillStyle = 'rgba(40, 40, 40, 0.7)';
+      // Text Color Logic
+      ctx.fillStyle = isDark ? 'rgba(200, 200, 200, 0.7)' : 'rgba(40, 40, 40, 0.7)';
       ctx.textAlign = 'left';
 
       const signalLock = clarity > 0.8 ? "LOCKED" : "SEARCHING...";
@@ -300,7 +312,8 @@ const SignalToNoise = () => {
       stateRef.current.scanLineX = (stateRef.current.scanLineX + 1) % w;
       const x = stateRef.current.scanLineX;
       
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+      // Scan Line Color Logic
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, h);
@@ -311,6 +324,7 @@ const SignalToNoise = () => {
       const { width, height } = stateRef.current;
       stateRef.current.time += 0.01;
       const time = stateRef.current.time;
+      const isDark = themeRef.current; // Access current theme
 
       // 1. Trails Effect (Transparent Background Logic)
       ctx.globalCompositeOperation = 'destination-out';
@@ -324,10 +338,11 @@ const SignalToNoise = () => {
       const clarity = rawClarity * rawClarity * (3 - 2 * rawClarity);
 
       // 3. Draw Grid
-      drawGrid(ctx, width, height, clarity);
+      drawGrid(ctx, width, height, clarity, isDark);
 
       // 4. Update and Draw Particles
-      ctx.fillStyle = '#2A2A2A';
+      // Particle Color Logic
+      ctx.fillStyle = isDark ? '#E6E6E6' : '#2A2A2A';
 
       // Amplitude and margin need to be dynamic based on current height
       const amplitude = height * 0.1;
@@ -364,7 +379,7 @@ const SignalToNoise = () => {
       ctx.globalAlpha = 1.0;
 
       // 5. Draw UI Overlay
-      drawOverlay(ctx, width, height, clarity, time);
+      drawOverlay(ctx, width, height, clarity, time, isDark);
 
       animationRef.current = requestAnimationFrame(draw);
     };
@@ -377,7 +392,7 @@ const SignalToNoise = () => {
       }
       resizeObserver.disconnect();
     };
-  }, []);
+  }, []); // Dependencies empty so setup runs once; theme is accessed via ref
 
   return (
     <div className="flex justify-center items-center h-full w-full">
@@ -426,7 +441,8 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
         <div className="relative h-[500px]">
           <div className={`absolute -top-4 -right-4 w-24 h-24 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
           <div className={`absolute -bottom-4 -left-4 w-24 h-24 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-          <SignalToNoise />
+          {/* PASSING isDarkMode PROP HERE */}
+          <SignalToNoise isDarkMode={isDarkMode} />
           <div className={`text-right text-xs font-mono mt-2 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
             Fig 1.0 — Opposing forces in perfect balance
           </div>
@@ -454,7 +470,8 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
              <div className="h-[200px] relative w-full">
                 <div className={`absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
                 <div className={`absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-                <SignalToNoise />
+                {/* PASSING isDarkMode PROP HERE */}
+                <SignalToNoise isDarkMode={isDarkMode} />
              </div>
              
              {/* Caption moved here - directly inside floated element */}
