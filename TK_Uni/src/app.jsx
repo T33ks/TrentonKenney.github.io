@@ -154,8 +154,7 @@ const EXPERIENCES = [
 ];
 
 
-import React, { useRef, useEffect } from 'react';
-
+// --- NEW COMPONENT: SignalToNoise (Replaces Artwork33) ---
 // Theme: Scientific observation of emerging order.
 // Visualization: An analog spectrum analyzer display.
 // Particles represent raw sensor data, visualized with a graticule overlay and dynamic readouts.
@@ -348,8 +347,6 @@ const SignalToNoise = () => {
   );
 };
 
-export default SignalToNoise;
-
 // --- NEW COMPONENT: IntroductionSection ---
 const IntroductionSection = ({ isDarkMode, accentHex }) => {
   return (
@@ -384,7 +381,10 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
         <div className="relative h-[500px]">
           <div className={`absolute -top-4 -right-4 w-24 h-24 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
           <div className={`absolute -bottom-4 -left-4 w-24 h-24 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-          <Artwork33 isDarkMode={isDarkMode} />
+          
+          {/* REPLACED COMPONENT */}
+          <SignalToNoise />
+
           <div className={`text-right text-xs font-mono mt-2 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
             Fig 1.0 — Opposing forces in perfect balance
           </div>
@@ -409,10 +409,14 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
           {/* Floated Animation Box */}
           {/* UPDATED: Increased margins (ml-6, mb-6) and moved Caption INSIDE the floated div */}
           <div className="float-right w-[50%] h-auto ml-6 mb-6 relative">
-             <div className="h-[200px] relative w-full">
+             <div className="h-[200px] relative w-full overflow-hidden">
                 <div className={`absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
                 <div className={`absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-                <Artwork33 isDarkMode={isDarkMode} />
+                
+                {/* REPLACED COMPONENT */}
+                <div className="scale-[0.4] origin-top-right">
+                  <SignalToNoise />
+                </div>
              </div>
              
              {/* Caption moved here - directly inside floated element */}
@@ -1618,4 +1622,4 @@ export default function App() {
     </div>
   );
 }
-
+}
