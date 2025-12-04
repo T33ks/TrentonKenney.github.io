@@ -1,3 +1,7 @@
+{
+type: uploaded file
+fileName: t33ks/trentonkenney.github.io/TrentonKenney.github.io-main/TK_Uni/src/app.jsx
+fullContent:
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, ChevronDown, ChevronUp } from 'lucide-react';
