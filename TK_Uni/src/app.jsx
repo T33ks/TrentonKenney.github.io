@@ -154,12 +154,22 @@ const EXPERIENCES = [
 ];
 
 
-// --- NEW COMPONENT: Artwork33 (The Helix Animation) ---
-const Artwork33 = ({ isDarkMode }) => {
+
+
+// Theme: Scientific observation of emerging order
+
+const SignalToNoise = () => {
   const canvasRef = useRef(null);
-  const animationFrameRef = useRef(null);
+  const animationRef = useRef(null);
   
-  const ANIMATION_SPEED_FACTOR = 0.3; 
+  // Use refs for mutable state to avoid re-triggering effects on resize
+  const stateRef = useRef({
+    particles: [],
+    width: 0,
+    height: 0,
+    scanLineX: 0,
+    time: 0
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -167,179 +177,217 @@ const Artwork33 = ({ isDarkMode }) => {
 
     const ctx = canvas.getContext('2d');
     
-    // Handle High DPI displays
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    ctx.scale(dpr, dpr);
-
-    const width = rect.width;
-    const height = rect.height;
-
-    const bgColor = isDarkMode ? '#1a1a1a' : '#F0EEE6';
-    const pColor = isDarkMode ? { r: 200, g: 200, b: 200 } : { r: 10, g: 10, b: 10 };
-    const lColor = isDarkMode ? { r: 220, g: 220, b: 220 } : { r: 20, g: 20, b: 20 };
-
-    let time = 0;
-    const particles = [];
-    let helixPoints = [];
-    const numParticles = 60; 
-    const TWO_PI = Math.PI * 2;
-
-    const random = (min, max) => {
-      if (max === undefined) {
-        max = min;
-        min = 0;
-      }
-      return Math.random() * (max - min) + min;
+    // Configuration
+    const config = {
+      particleCount: 8000,
+      layers: 25,           
+      frequency: 0.015,     
+      speed: 0.2,
+      noiseStrength: 100,
+      drag: 0.05,           
+      trailLength: 0.15,    
     };
 
-    const map = (value, start1, stop1, start2, stop2) => {
-      return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-    };
+    // --- RESIZE HANDLER ---
+    const handleResize = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
 
-    const dist = (x1, y1, z1, x2, y2, z2) => {
-      const dx = x2 - x1;
-      const dy = y2 - y1;
-      const dz = z2 - z1;
-      return Math.sqrt(dx * dx + dy * dy + dz * dz);
-    };
-
-    // --- UPDATED SCALE LOGIC ---
-    const minDimension = Math.min(width, height);
-    const baseRadius = minDimension * 0.25; 
-    const baseSizeScale = width < 500 ? 0.6 : 1.0;
-
-    class HelixParticle {
-      constructor(initialPhase) {
-        this.phase = initialPhase || random(TWO_PI);
-        this.radius = random(baseRadius * 0.9, baseRadius * 1.1);
-        this.yOffset = random(-300, 300);
-        this.ySpeed = random(0.3, 0.6) * (random() > 0.5 ? 1 : -1);
-        this.rotationSpeed = random(0.005, 0.0075);
-        this.size = random(3, 6) * baseSizeScale; 
-        this.opacity = random(120, 180);
-        this.strength = random(0.8, 1);
-      }
-
-      update() {
-        this.phase += (this.rotationSpeed * this.strength) * ANIMATION_SPEED_FACTOR;
-        this.yOffset += this.ySpeed * ANIMATION_SPEED_FACTOR;
-
-        if (this.yOffset > 350) this.yOffset = -350;
-        if (this.yOffset < -350) this.yOffset = 350;
-
-        const x = width / 2 + Math.cos(this.phase) * this.radius;
-        const y = height / 2 + this.yOffset;
-        const z = Math.sin(this.phase) * this.radius;
-
-        return { x, y, z, strength: this.strength, size: this.size, opacity: this.opacity };
-      }
-    }
-
-    for (let i = 0; i < numParticles; i++) {
-      const initialPhase = (i / numParticles) * TWO_PI * 3; 
-      particles.push(new HelixParticle(initialPhase));
-    }
-
-    const targetFPS = 30;
-    const frameInterval = 1000 / targetFPS;
-    let lastFrameTime = 0;
-
-    const animate = (currentTime) => {
-      if (!lastFrameTime) {
-        lastFrameTime = currentTime;
-        animationFrameRef.current = requestAnimationFrame(animate);
-        return;
-      }
-
-      const deltaTime = currentTime - lastFrameTime;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = parent.getBoundingClientRect();
       
-      if (deltaTime >= frameInterval) {
-        const remainder = deltaTime % frameInterval;
-        lastFrameTime = currentTime - remainder;
-        
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(0, 0, width, height);
+      // Update state dimensions
+      stateRef.current.width = rect.width;
+      stateRef.current.height = rect.height;
 
-        time += 0.02 * ANIMATION_SPEED_FACTOR;
+      // Set actual canvas size to match display size * DPI
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      
+      // CSS size
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+      
+      // Scale context to ensure correct drawing operations
+      ctx.scale(dpr, dpr);
 
-        helixPoints = particles.map(particle => particle.update());
-        helixPoints.sort((a, b) => a.z - b.z);
-
-        ctx.lineWidth = 1.2;
-        for (let i = 0; i < helixPoints.length; i++) {
-          const hp1 = helixPoints[i];
-          for (let j = 0; j < helixPoints.length; j++) {
-            if (i !== j) {
-              const hp2 = helixPoints[j];
-              const d = dist(hp1.x, hp1.y, hp1.z, hp2.x, hp2.y, hp2.z);
-
-              // Scale connection distance proportional to radius
-              const connectionThreshold = baseRadius * 1.5;
-
-              if (d < connectionThreshold) {
-                const opacity = map(d, 0, connectionThreshold, 40, 10) * map(Math.min(hp1.z, hp2.z), -110, 110, 0.3, 1);
-                ctx.strokeStyle = `rgba(${lColor.r}, ${lColor.g}, ${lColor.b}, ${opacity / 255})`;
-                ctx.beginPath();
-                ctx.moveTo(hp1.x, hp1.y);
-                ctx.lineTo(hp2.x, hp2.y);
-                ctx.stroke();
-              }
-            }
-          }
-        }
-
-        for (let i = 0; i < helixPoints.length; i++) {
-          const hp = helixPoints[i];
-          const sizeMultiplier = map(hp.z, -110, 110, 0.6, 1.3);
-          const adjustedOpacity = map(hp.z, -110, 110, hp.opacity * 0.4, hp.opacity);
-
-          ctx.fillStyle = `rgba(${pColor.r}, ${pColor.g}, ${pColor.b}, ${adjustedOpacity / 255})`;
-          ctx.beginPath();
-          ctx.arc(hp.x, hp.y, (hp.size * sizeMultiplier) / 2, 0, TWO_PI);
-          ctx.fill();
-        }
-
-        const sStroke = isDarkMode ? 'rgba(255, 255, 255, 0.118)' : 'rgba(0, 0, 0, 0.118)';
-        ctx.strokeStyle = sStroke;
-        ctx.lineWidth = 2;
-        const sortedByY = [...helixPoints].sort((a, b) => a.y - b.y);
-
-        for (let i = 0; i < sortedByY.length - 1; i++) {
-          const p1 = sortedByY[i];
-          const p2 = sortedByY[i + 1];
-
-          if (Math.abs(p1.y - p2.y) < 30) {
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
-        }
+      // Re-initialize particles if array is empty (first run)
+      // or just ensure they are within bounds on next frame
+      if (stateRef.current.particles.length === 0) {
+        initParticles(rect.width, rect.height);
       }
-      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    animationFrameRef.current = requestAnimationFrame(animate);
+    const initParticles = (w, h) => {
+      const particles = [];
+      // Scale factor for smaller screens
+      const baseSizeScale = w < 500 ? 0.6 : 1.0;
+
+      for (let i = 0; i < config.particleCount; i++) {
+        const layerIndex = Math.floor(Math.random() * config.layers);
+        particles.push({
+          x: Math.random() * w,
+          y: h / 2, 
+          layer: layerIndex,
+          z: Math.random(),
+          vx: config.speed * (0.5 + Math.random() * 0.5),
+          driftOffset: Math.random() * Math.PI * 2,
+          size: (Math.random() < 0.9 ? 1 : 1.5) * baseSizeScale,
+          baseAlpha: 0.2 + Math.random() * 0.6,
+        });
+      }
+      stateRef.current.particles = particles;
+    };
+
+    // Setup ResizeObserver for robust DPI handling
+    const resizeObserver = new ResizeObserver(() => handleResize());
+    resizeObserver.observe(canvas.parentElement);
+    
+    // Initial resize trigger
+    handleResize();
+
+    const drawGrid = (ctx, w, h, clarity) => {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = `rgba(0, 0, 0, ${0.05 + clarity * 0.05})`;
+      
+      const gridSize = 55;
+      
+      // Vertical Lines
+      for (let i = 0; i <= w; i += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, h);
+        ctx.setLineDash([2, 4]);
+        ctx.stroke();
+      }
+      
+      // Horizontal Lines
+      for (let i = 0; i <= h; i += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(w, i);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]); // Reset
+
+      // Center Crosshair
+      ctx.strokeStyle = `rgba(0, 0, 0, 0.2)`;
+      ctx.beginPath();
+      ctx.moveTo(w / 2, h / 2 - 10);
+      ctx.lineTo(w / 2, h / 2 + 10);
+      ctx.moveTo(w / 2 - 10, h / 2);
+      ctx.lineTo(w / 2 + 10, h / 2);
+      ctx.stroke();
+    };
+
+    const drawOverlay = (ctx, w, h, clarity, time) => {
+      ctx.font = '10px "Courier New", monospace';
+      ctx.fillStyle = 'rgba(40, 40, 40, 0.7)';
+      ctx.textAlign = 'left';
+
+      const signalLock = clarity > 0.8 ? "LOCKED" : "SEARCHING...";
+
+      ctx.fillText(`STATUS: ${signalLock}`, 20, 30);
+
+      // Bottom Axis
+      ctx.textAlign = 'right';
+      ctx.fillText(`T+${time.toFixed(2)}s`, w - 20, h - 20);
+      
+      // Vertical Scan Line (Continuous)
+      stateRef.current.scanLineX = (stateRef.current.scanLineX + 1) % w;
+      const x = stateRef.current.scanLineX;
+      
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    };
+
+    const draw = () => {
+      const { width, height } = stateRef.current;
+      stateRef.current.time += 0.01;
+      const time = stateRef.current.time;
+
+      // 1. Trails Effect (Transparent Background Logic)
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = `rgba(0, 0, 0, ${config.trailLength})`; 
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = 'source-over';
+
+      // 2. Calculate "Clarity" Cycle
+      const cycle = Math.sin(time * 0.3); 
+      const rawClarity = (cycle + 1) / 2;
+      const clarity = rawClarity * rawClarity * (3 - 2 * rawClarity);
+
+      // 3. Draw Grid
+      drawGrid(ctx, width, height, clarity);
+
+      // 4. Update and Draw Particles
+      ctx.fillStyle = '#2A2A2A';
+
+      // Amplitude and margin need to be dynamic based on current height
+      const amplitude = height * 0.1;
+      const margin = height * 0.15;
+
+      stateRef.current.particles.forEach(p => {
+        // Move Horizontal
+        p.x += p.vx;
+        if (p.x > width) p.x = -10;
+
+        // Target Calculation
+        const layerY = margin + (p.layer / (config.layers - 1)) * (height - margin * 2);
+
+        // Signal: Coherent Waves
+        const signalPhase = time + (p.layer * 0.15); 
+        const waveY = Math.sin(p.x * config.frequency + signalPhase) * amplitude;
+        
+        // Noise: "Sensor Jitter"
+        const noiseY = Math.sin(time * 5 + p.driftOffset) * config.noiseStrength + 
+                       Math.cos(p.x * 0.1) * (config.noiseStrength * 0.5);
+        
+        const targetY = layerY + waveY * clarity + noiseY * (1 - clarity);
+
+        // Physics
+        p.y += (targetY - p.y) * config.drag;
+
+        // Draw with "Phosphor" intensity
+        const stateAlpha = 0.3 + 0.7 * clarity; 
+        ctx.globalAlpha = p.baseAlpha * p.z * stateAlpha;
+        
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+      });
+
+      ctx.globalAlpha = 1.0;
+
+      // 5. Draw UI Overlay
+      drawOverlay(ctx, width, height, clarity, time);
+
+      animationRef.current = requestAnimationFrame(draw);
+    };
+
+    draw();
 
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-        animationFrameRef.current = null;
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
       }
+      resizeObserver.disconnect();
     };
-  }, [isDarkMode]);
+  }, []);
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="w-full h-full border-0 overflow-hidden">
-        <canvas ref={canvasRef} className="w-full h-full" />
+    <div className="flex justify-center items-center h-full w-full">
+      <div className="w-full h-full border-0 overflow-hidden relative">
+        <canvas 
+            ref={canvasRef} 
+            className="block"
+        />
       </div>
     </div>
   );
 };
+
 
 // --- NEW COMPONENT: IntroductionSection ---
 const IntroductionSection = ({ isDarkMode, accentHex }) => {
@@ -1609,3 +1657,4 @@ export default function App() {
     </div>
   );
 }
+
