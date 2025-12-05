@@ -48,7 +48,7 @@ const EXPERIENCES = [
         period: "Aug 2024 – Aug 2025",
         description: `• Led spectrum and operational licensing inputs for missions, coordinating with FCC, ITU, NTIA, NASA, DoD, and NOAA.
 • Served and Trained as Ground Control Operator for New Glenn’s first flight with the Blue Ring Payload.
-• Co‑designed an AI‑powered ops workflow, defining end‑to‑end architecture, agent interactions, and data‑flow schemas that embedded LLM toolchains into our ground system and reduced routine data‑validation tasks and accelerated mission tooling development. 
+• Co‑designed an AI‑powered ops workflow, defining end‑to‑end architecture, agent interactions, and data‑flow schemas that embedded LLM toolchains into our ground system to reduce routine data‑validation tasks and accelerate mission tooling development. 
 • Wrote, tested, and executed  procedural documentation to be used to command and receive vehicle telemetry.`,
         skills: [
           { name: "Spectrum Coordination", type: "technical-hardware" },
@@ -1651,6 +1651,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
