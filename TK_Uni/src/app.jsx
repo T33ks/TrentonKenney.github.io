@@ -436,7 +436,7 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
            {/* Body Text - Magazine Wrap */}
            <div className={`text-xs md:text-xl leading-relaxed md:leading-relaxed font-light text-justify ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
              <p className="mb-2 md:mb-3">
-               <span className="float-left text-2xl md:text-5xl font-bold mr-2 md:mr-3 mt-[-4px] md:mt-[-8px]" style={{ fontFamily: FONTS.body }}>M</span>
+               <span className="float-left text-4xl md:text-7xl font-bold mr-2 md:mr-3 mt-[-4px] md:mt-[-8px]" style={{ fontFamily: FONTS.body }}>M</span>
                y career began in the high-pressure environment of a Mission Control Center, where I was responsible for the critical "handshake" between the ground system and space vehicle. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
              </p>
              <p className="mb-2 md:mb-3">
@@ -445,7 +445,7 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
               Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and regulatory frameworks. My expertise lies in optimizing that signal-to-noise ratio, taking complex concepts in space exploration or policy and translating them into clear, accessible strategies.             </p>
              
              <div className={`mt-4 md:mt-8 pl-3 border-l-2 italic text-[0.65rem] md:text-base opacity-80 ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
-                "We don't want to conquer the cosmos, we simply want to extend the boundaries of Earth to the frontiers of the cosmos - Stanisław Lem."
+                "We don't want to conquer the cosmos, we simply want to extend the boundaries of Earth to the frontiers of the cosmos - Stanisław Lem (Solaris)."
              </div>
            </div>
         </div>
@@ -1633,6 +1633,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
