@@ -435,13 +435,13 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
 
            {/* Body Text - Magazine Wrap */}
            <div className={`text-xs md:text-xl leading-relaxed md:leading-relaxed font-light text-justify ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
-             <p className="mb-3 md:mb-6">
+             <p className="mb-2 md:mb-3">
                <span className="float-left text-2xl md:text-5xl font-bold mr-2 md:mr-3 mt-[-4px] md:mt-[-8px]" style={{ fontFamily: FONTS.body }}>M</span>
                y career began in the high-pressure environment of a Mission Control Center, where I was responsible for the critical "handshake" between the ground system and space vehicle. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
              </p>
-             <p className="mb-3 md:mb-6">
+             <p className="mb-2 md:mb-3">
               While the space industry is often defined by its hardware and software, I believe it is sustained by human connection. I have transitioned from moment-to-moment decision making for an upcoming satellite pass to shaping the regulatory environment that enable them.             </p>
-             <p className="mb-3 md:mb-6">
+             <p className="mb-2 md:mb-3">
               Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and regulatory frameworks. My expertise lies in optimizing that signal-to-noise ratio, taking complex concepts in space exploration or policy and translating them into clear, accessible strategies.             </p>
              
              <div className={`mt-4 md:mt-8 pl-3 border-l-2 italic text-[0.65rem] md:text-base opacity-80 ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
@@ -1633,5 +1633,6 @@ export default function App() {
     </div>
   );
 }
+
 
 
