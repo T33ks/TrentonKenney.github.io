@@ -14,7 +14,7 @@ const EXPERIENCES = [
   {
     id: 1,
     role: "Regulatory Engineer",
-    company: "PLANET",
+    company: "PLANET LABS",
     period: "Aug 2025 – Present",
     description: `Currently, developing and delivering domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.`,
     expandedContent: `• Leading and supporting spectrum coordination with government and commercial users.
@@ -1633,4 +1633,5 @@ export default function App() {
     </div>
   );
 }
+
 
