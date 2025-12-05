@@ -440,7 +440,7 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
                y career began in the high-pressure environment of a Mission Control Center, where I was responsible for the critical "handshake" between the ground system and space vehicle. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
              </p>
              <p className="mb-3 md:mb-6">
-              While the space industry is defined by hardware and software, I believe it is sustained by human connection. I have transitioned from moment-to-moment decision making for an upcoming satellite pass to shaping the regulatory environment that enable them.             </p>
+              While the space industry is often defined by its hardware and software, I believe it is sustained by human connection. I have transitioned from moment-to-moment decision making for an upcoming satellite pass to shaping the regulatory environment that enable them.             </p>
              <p className="mb-3 md:mb-6">
               Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and regulatory frameworks. My expertise lies in optimizing that signal-to-noise ratio, taking complex concepts in space exploration or policy and translating them into clear, accessible strategies.             </p>
              
@@ -1633,3 +1633,4 @@ export default function App() {
     </div>
   );
 }
+
