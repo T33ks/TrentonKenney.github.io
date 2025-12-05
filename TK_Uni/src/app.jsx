@@ -16,7 +16,7 @@ const EXPERIENCES = [
     role: "Regulatory Engineer",
     company: "PLANET",
     period: "Aug 2025 – Present",
-    description: `Develop and deliver domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.`,
+    description: `Currently, developing and delivering domestic and international satellite and ground-station filings while coordinating with global regulators, administrations, and operators to ensure that space regulations evolve in an equitable, collaborative, and sustainable way alongside industry partners.`,
     expandedContent: `• Leading and supporting spectrum coordination with government and commercial users.
 • Building domain specific tools to support licensing and coordination efforts.
 • Managing and tracking regulatory changes to assess impact on operations and future missions.`,
@@ -73,7 +73,7 @@ const EXPERIENCES = [
   },
   {
     id: 3,
-    role: "Engineering Intern (Multiple Roles)",
+    role: "NASA Engineer Intern",
     company: "NASA JOHNSON SPACE CENTER",
     period: "Aug 2020 – May 2022",
     description: "Rotated across human factors research, systems engineering, and flight operations for HRP, Orion, Starliner, and Lunar exploration missions.",
@@ -87,7 +87,7 @@ const EXPERIENCES = [
     subExperiences: [
       {
         id: "3a",
-        role: "Human Research Program Data Scientist (Intern)",
+        role: "Human Research Program Data Scientist",
         company: "NASA JSC",
         period: "Jan 2022 – May 2022",
         description: `• Built a Neo4j evidence database to represent findings in the Human Research Program Evidence Handbook.
@@ -100,7 +100,7 @@ const EXPERIENCES = [
       },
       {
         id: "3b",
-        role: "Systems Engineer (Intern)",
+        role: "Systems Engineer",
         company: "NASA JSC",
         period: "Aug 2021 – Dec 2021",
         description: `• Assessed automated landing capabilities for Human Landing System concepts using Apollo and Shuttle heritage data.
@@ -112,7 +112,7 @@ const EXPERIENCES = [
       },
       {
         id: "3c",
-        role: "Human Factors Engineer (Intern)",
+        role: "Human Factors Engineer",
         company: "NASA JSC",
         period: "May 2021 – Aug 2021",
         description: `• Supported EVA operations concepts and science objectives for lunar, and deep-space habitat designs.
@@ -124,7 +124,7 @@ const EXPERIENCES = [
       },
       {
         id: "3d",
-        role: "Flight Operations Engineer (Intern)",
+        role: "Flight Operations Engineer",
         company: "NASA JSC",
         period: "Aug 2020 – May 2021",
         description: `• Tested and verified ground displays and Operator UIs for uncrewed and crewed Boeing Starliner missions.
@@ -156,10 +156,7 @@ const EXPERIENCES = [
 
 
 
-// Theme: Scientific observation of emerging order.
-// Visualization: An analog spectrum analyzer display.
-// Particles represent raw sensor data, visualized with a graticule overlay and dynamic readouts.
-// Updates: Transparent background, Robust Scaling (ResizeObserver), Continuous Scan, DARK MODE SUPPORT.
+// Signal-to-noise Animation
 
 const SignalToNoise = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
@@ -419,7 +416,7 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
            
            {/* Caption */}
            <div className={`text-right text-[0.5rem] md:text-xs font-mono mt-1 md:mt-2 opacity-50 leading-tight ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
-              Fig 1.0 — Signal/Noise Ratio
+              Fig 1.0 — Acquisition & Loss of signal 
            </div>
         </div>
 
@@ -440,15 +437,15 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
            <div className={`text-xs md:text-xl leading-relaxed md:leading-relaxed font-light text-justify ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
              <p className="mb-3 md:mb-6">
                <span className="float-left text-2xl md:text-5xl font-bold mr-2 md:mr-3 mt-[-4px] md:mt-[-8px]" style={{ fontFamily: FONTS.body }}>M</span>
-               y career began in the high-pressure environment of Mission Control Center, where I was responsible for the critical "handshake" between the ground system and space vehicle. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
+               y career began in the high-pressure environment of a Mission Control Center, where I was responsible for the critical "handshake" between the ground system and space vehicle. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
              </p>
              <p className="mb-3 md:mb-6">
-              While the space industry is defined by hardware and software, I believe it is sustained by human connection. I have transitioned from moment-to-moment decision making for an upcoming satellite pass to defining the strategic frameworks that enable them.             </p>
+              While the space industry is defined by hardware and software, I believe it is sustained by human connection. I have transitioned from moment-to-moment decision making for an upcoming satellite pass to shaping the regulatory environment that enable them.             </p>
              <p className="mb-3 md:mb-6">
-              Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and regulatory bodies. My expertise lies in optimizing for that signal-to-noise ratio, taking complex concepts in satellite communications or policy and translating them into clear, accessible strategies.             </p>
+              Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and regulatory frameworks. My expertise lies in optimizing that signal-to-noise ratio, taking complex concepts in space exploration or policy and translating them into clear, accessible strategies.             </p>
              
              <div className={`mt-4 md:mt-8 pl-3 border-l-2 italic text-[0.65rem] md:text-base opacity-80 ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
-                "From the legacy of NASA human spaceflight to the agile frontiers of commercial space."
+                "We don't want to conquer the cosmos, we simply want to extend the boundaries of Earth to the frontiers of the cosmos - Stanisław Lem."
              </div>
            </div>
         </div>
