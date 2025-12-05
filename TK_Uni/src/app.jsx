@@ -155,12 +155,13 @@ const EXPERIENCES = [
 
 
 
+
 // Theme: Scientific observation of emerging order.
 // Visualization: An analog spectrum analyzer display.
 // Particles represent raw sensor data, visualized with a graticule overlay and dynamic readouts.
 // Updates: Transparent background, Robust Scaling (ResizeObserver), Continuous Scan, DARK MODE SUPPORT.
 
-  const SignalToNoise = ({ isDarkMode }) => {
+const SignalToNoise = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   
@@ -178,16 +179,13 @@ const EXPERIENCES = [
     width: 0,
     height: 0,
     scanLineX: 0,
-    time: 0,
-    startTime: 0,
-    currentClarity: 0
+    time: 0
   });
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    stateRef.current.startTime = Date.now();
     const ctx = canvas.getContext('2d');
     
     // Configuration
@@ -285,7 +283,7 @@ const EXPERIENCES = [
         ctx.stroke();
       }
       ctx.setLineDash([]); // Reset
-    };
+
 
     const drawOverlay = (ctx, w, h, clarity, time, isDark) => {
       ctx.font = '10px "Courier New", monospace';
@@ -325,34 +323,10 @@ const EXPERIENCES = [
       ctx.fillRect(0, 0, width, height);
       ctx.globalCompositeOperation = 'source-over';
 
-      // 2. Calculate "Clarity" Cycle based on custom timing
-      // Intro: 0s–8s (Searching), 8s–15s (Locked).
-      // Loop: Alternates every 7 seconds after that.
-      // Transition: Float/Lerp.
-      
-      const elapsed = (Date.now() - stateRef.current.startTime) / 1000;
-      let targetClarity = 0;
-      
-      if (elapsed < 8) {
-        // Intro Searching
-        targetClarity = 0;
-      } else if (elapsed < 15) {
-        // Intro Locked
-        targetClarity = 1;
-      } else {
-        // Loop: 15-22 Searching, 22-29 Locked, etc.
-        const loopTime = elapsed - 15;
-        const phase = Math.floor(loopTime / 7);
-        targetClarity = phase % 2 === 0 ? 0 : 1;
-      }
-
-      // Smooth float transition
-      const lerpSpeed = 0.05;
-      stateRef.current.currentClarity += (targetClarity - stateRef.current.currentClarity) * lerpSpeed;
-      
-      // Apply the calculated clarity
-      // Map 0-1 range to the effect intensity (similar to previous "rawClarity")
-      const clarity = stateRef.current.currentClarity; 
+      // 2. Calculate "Clarity" Cycle
+      const cycle = Math.sin(time * 0.3); 
+      const rawClarity = (cycle + 1) / 2;
+      const clarity = rawClarity * rawClarity * (3 - 2 * rawClarity);
 
       // 3. Draw Grid
       drawGrid(ctx, width, height, clarity, isDark);
@@ -396,7 +370,7 @@ const EXPERIENCES = [
       ctx.globalAlpha = 1.0;
 
       // 5. Draw UI Overlay
-      drawOverlay(ctx, width, height, clarity, elapsed, isDark);
+      drawOverlay(ctx, width, height, clarity, time, isDark);
 
       animationRef.current = requestAnimationFrame(draw);
     };
@@ -421,8 +395,7 @@ const EXPERIENCES = [
       </div>
     </div>
   );
-};      
-
+};
 
 
 // --- NEW COMPONENT: IntroductionSection ---
@@ -1695,4 +1668,3 @@ export default function App() {
     </div>
   );
 }
-
