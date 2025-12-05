@@ -404,7 +404,7 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
       <div className="max-w-5xl mx-auto clearfix">
         
         {/* Floating Visual - Floats right so text wraps around it */}
-        <div className="float-right w-[35%] md:w-[45%] h-[140px] md:h-[450px] ml-2 md:ml-12 mb-2 md:mb-8 relative">
+        <div className="float-right w-[45%] md:w-[50%] h-[140px] md:h-[450px] ml-2 md:ml-12 mb-2 md:mb-8 relative">
            {/* Graphic Container */}
            <div className="w-full h-full relative border-l-2 border-b-2 border-opacity-30" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)' }}>
               {/* Corner Accents */}
@@ -1633,6 +1633,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
