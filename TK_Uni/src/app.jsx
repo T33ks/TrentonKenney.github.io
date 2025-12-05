@@ -409,23 +409,26 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
         <div className="space-y-8">
            <div className="flex flex-col gap-2">
              <span className="font-mono text-xs uppercase tracking-[0.3em] opacity-60" style={{ color: accentHex }}>
-               Career Trajectory
+               Operations to Regulations
              </span>
              <h1 className="text-7xl leading-none uppercase" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
-               Dynamic <br />
-               <span style={{ color: accentHex }}>Equilibrium</span>
+               The <br />
+               <span style={{ color: accentHex }}>Signal</span>
              </h1>
            </div>
            <div className={`text-xl leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
              <p className="first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
-               The path of a mission is never a straight line. It is a series of calculated adjustments, finding balance between regulatory constraint and operational velocity. 
+               My career began in the high-pressure environment of Mission Control, where I was responsible for the critical "handshake" between ground systems and space vehicles. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
              </p>
              <p className="mt-4">
-               From the strict precision of NASA human spaceflight to the agile frontiers of commercial satellite constellations, my work exists at the intersection of hardware, software, and policy.
+               While the space industry is defined by hardware and software, I believe it is sustained by human connection. I have transitioned from managing tactical, moment-to-moment satellite passes to defining the strategic frameworks that enable them.
+             </p>
+             <p className="mt-4">
+               Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and human decision-making. My expertise lies in optimizing for that signal-to-noise ratio, taking complex concepts in satellite communications or policy and translating them into clear, accessible strategies.
              </p>
            </div>
            <div className={`pl-6 border-l-4 italic ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
-              "Regulating the vacuum, programming the impossible."
+              "From the legacy of NASA human spaceflight to the agile frontiers of commercial space."
            </div>
         </div>
         {/* Right: Animation */}
@@ -435,7 +438,7 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
           {/* PASSING isDarkMode PROP HERE */}
           <SignalToNoise isDarkMode={isDarkMode} />
           <div className={`text-right text-xs font-mono mt-2 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
-            Fig 1.0 — Opposing forces in perfect balance
+            Fig 1.0 — acquisition & loss of signal
           </div>
         </div>
       </div>
@@ -445,11 +448,11 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
         {/* Header Block (Full Width) */}
         <div className="mb-6">
            <span className="font-mono text-[0.65rem] uppercase tracking-[0.3em] opacity-60 block mb-1" style={{ color: accentHex }}>
-             Career Trajectory
+             Operations to Regulations
            </span>
            <h1 className="text-4xl sm:text-5xl leading-none uppercase break-words" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
-             Dynamic <br />
-             <span style={{ color: accentHex }}>Equilibrium</span>
+             The <br />
+             <span style={{ color: accentHex }}>Signal</span>
            </h1>
         </div>
 
@@ -474,13 +477,16 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
           {/* Text Wrapping Around */}
           <div className={`text-sm leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
              <p className="first-letter:text-4xl first-letter:font-bold first-letter:mr-2 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
-               The path of a mission is never a straight line. It is a series of calculated adjustments, finding balance between regulatory constraint and operational velocity. 
+               My career began in the high-pressure environment of Mission Control, where I was responsible for the critical "handshake" between ground systems and space vehicles. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
              </p>
              <p className="mt-4">
-               From the strict precision of NASA human spaceflight to the agile frontiers of commercial satellite constellations, my work exists at the intersection of hardware, software, and policy.
+               While the space industry is defined by hardware and software, I believe it is sustained by human connection. I have transitioned from managing tactical, moment-to-moment satellite passes to defining the strategic frameworks that enable them.
+             </p>
+             <p className="mt-4">
+               Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and human decision-making. My expertise lies in optimizing for that signal-to-noise ratio, taking complex concepts in satellite communications or policy and translating them into clear, accessible strategies.
              </p>
              <div className={`mt-6 pl-3 border-l-2 italic text-xs ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
-                "Regulating the vacuum, programming the impossible."
+                "From the legacy of NASA human spaceflight to the agile frontiers of commercial space."
              </div>
           </div>
         </div>
@@ -1668,4 +1674,3 @@ export default function App() {
     </div>
   );
 }
-
