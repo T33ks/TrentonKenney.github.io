@@ -431,7 +431,7 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
              {/* CHANGED: Removed 'uppercase' class so we can control casing manually */}
              <h1 className="text-3xl md:text-7xl leading-none font-medium not-italic" style={{ fontFamily: FONTS.modern, color: isDarkMode ? '#fff' : '#000' }}>
                THE <br />
-               <span style={{ color: accentHex }}>SIgNAL</span>
+               <span style={{ color: accentHex }}>Signal</span>
              </h1>
            </div>
 
@@ -1656,6 +1656,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
