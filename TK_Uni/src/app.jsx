@@ -283,15 +283,6 @@ const SignalToNoise = ({ isDarkMode }) => {
         ctx.stroke();
       }
       ctx.setLineDash([]); // Reset
-
-      // Center Crosshair
-      ctx.strokeStyle = `rgba(${strokeBase}, 0.2)`;
-      ctx.beginPath();
-      ctx.moveTo(w / 2, h / 2 - 10);
-      ctx.lineTo(w / 2, h / 2 + 10);
-      ctx.moveTo(w / 2 - 10, h / 2);
-      ctx.lineTo(w / 2 + 10, h / 2);
-      ctx.stroke();
     };
 
     const drawOverlay = (ctx, w, h, clarity, time, isDark) => {
@@ -1677,3 +1668,4 @@ export default function App() {
     </div>
   );
 }
+
