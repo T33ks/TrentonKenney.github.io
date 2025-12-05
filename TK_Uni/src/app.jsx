@@ -853,16 +853,6 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
     />
   );
 };
-  }, [isDarkMode, zoomActive]);
-  
-  return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 -z-10"
-      style={{ display: 'block' }}
-    />
-  );
-};
 
 const CanyonParticles = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
@@ -1661,6 +1651,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
