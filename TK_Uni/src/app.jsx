@@ -428,10 +428,10 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
              <span className="font-mono text-[0.6rem] md:text-xs uppercase tracking-[0.2em] opacity-60 block mb-1" style={{ color: accentHex }}>
                Operations to Regulations
              </span>
-             {/* CHANGED: Replaced 'font-bold' with 'font-medium' (Weight 500) and ensured not-italic */}
-             <h1 className="text-3xl md:text-7xl leading-none uppercase font-medium not-italic" style={{ fontFamily: FONTS.modern, color: isDarkMode ? '#fff' : '#000' }}>
-               The <br />
-               <span style={{ color: accentHex }}>Signal</span>
+             {/* CHANGED: Removed 'uppercase' class so we can control casing manually */}
+             <h1 className="text-3xl md:text-7xl leading-none font-medium not-italic" style={{ fontFamily: FONTS.modern, color: isDarkMode ? '#fff' : '#000' }}>
+               THE <br />
+               <span style={{ color: accentHex }}>SIgNAL</span>
              </h1>
            </div>
 
@@ -443,9 +443,9 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
                y career began in the high-pressure environment of a Mission Control Center, where I was responsible for the critical "handshake" between the ground system and space vehicle. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
              </p>
              <p className="mb-2 md:mb-3">
-              While the space industry is often defined by its hardware and software, I believe it is sustained by human connection. I have transitioned from moment-to-moment decision making for an upcoming satellite pass to shaping the regulatory environment that enable them.             </p>
+              While the space industry is often defined by its hardware and software, I believe it is sustained by human connection. I have transitioned from moment-to-moment decision making for an upcoming satellite pass to shaping the regulatory environment that enables them.              </p>
              <p className="mb-2 md:mb-3">
-              Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and regulatory frameworks. My expertise lies in optimizing that signal-to-noise ratio, taking complex concepts in space exploration or policy and translating them into clear, accessible strategies.             </p>
+              Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and regulatory frameworks. My expertise lies in optimizing that signal-to-noise ratio, taking complex concepts in space exploration or policy and translating them into clear, accessible strategies.              </p>
              
              <div className={`mt-4 md:mt-8 pl-3 border-l-2 italic text-[0.65rem] md:text-base opacity-80 ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
                 "We don't want to conquer the cosmos, we simply want to extend the boundaries of Earth to the frontiers of the cosmos - Stanisław Lem (Solaris)."
@@ -457,6 +457,7 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
     </div>
   );
 };
+
 
 // --- HELPER COMPONENTS ---
 
@@ -1635,6 +1636,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
