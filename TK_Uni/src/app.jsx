@@ -401,97 +401,59 @@ const SignalToNoise = ({ isDarkMode }) => {
 // --- NEW COMPONENT: IntroductionSection ---
 const IntroductionSection = ({ isDarkMode, accentHex }) => {
   return (
-    <div className={`relative w-full z-20 pt-8 pb-12 md:pt-24 md:pb-32 px-4 md:px-16 border-b-2 ${isDarkMode ? 'bg-[#1a1a1a] border-[#2d2d2d]' : 'bg-[#F0EEE6] border-[#d1d1d1]'}`}>
+    <div className={`relative w-full z-20 pt-6 pb-8 md:pt-20 md:pb-24 px-4 md:px-16 border-b-2 ${isDarkMode ? 'bg-[#1a1a1a] border-[#2d2d2d]' : 'bg-[#F0EEE6] border-[#d1d1d1]'}`}>
       
-      {/* DESKTOP LAYOUT (Grid) */}
-      <div className="hidden md:grid max-w-6xl mx-auto grid-cols-2 gap-12 items-center">
-        {/* Left: Text */}
-        <div className="space-y-8">
-           <div className="flex flex-col gap-2">
-             <span className="font-mono text-xs uppercase tracking-[0.3em] opacity-60" style={{ color: accentHex }}>
+      {/* UNIFIED MAGAZINE LAYOUT (Responsive) */}
+      <div className="max-w-5xl mx-auto clearfix">
+        
+        {/* Floating Visual - Floats right so text wraps around it */}
+        <div className="float-right w-1/2 md:w-[45%] h-[140px] md:h-[450px] ml-4 md:ml-12 mb-2 md:mb-8 relative">
+           {/* Graphic Container */}
+           <div className="w-full h-full relative border-l-2 border-b-2 border-opacity-30" style={{ borderColor: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)' }}>
+              {/* Corner Accents */}
+              <div className={`absolute -top-1 -right-1 w-4 h-4 md:w-8 md:h-8 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+              <div className={`absolute -bottom-1 -left-1 w-4 h-4 md:w-8 md:h-8 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
+              
+              <SignalToNoise isDarkMode={isDarkMode} />
+           </div>
+           
+           {/* Caption */}
+           <div className={`text-right text-[0.5rem] md:text-xs font-mono mt-1 md:mt-2 opacity-50 leading-tight ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
+              Fig 1.0 — Signal/Noise Ratio
+           </div>
+        </div>
+
+        {/* Text Content */}
+        <div className="relative">
+           {/* Header - Compact on Mobile */}
+           <div className="mb-4 md:mb-8">
+             <span className="font-mono text-[0.6rem] md:text-xs uppercase tracking-[0.2em] opacity-60 block mb-1" style={{ color: accentHex }}>
                Operations to Regulations
              </span>
-             <h1 className="text-7xl leading-none uppercase" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
+             <h1 className="text-3xl md:text-7xl leading-none uppercase font-bold" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
                The <br />
                <span style={{ color: accentHex }}>Signal</span>
              </h1>
            </div>
-           <div className={`text-xl leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
-             <p className="first-letter:text-5xl first-letter:font-bold first-letter:mr-3 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
-               My career began in the high-pressure environment of Mission Control, where I was responsible for the critical "handshake" between ground systems and space vehicles. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
-             </p>
-             <p className="mt-4">
-               While the space industry is defined by hardware and software, I believe it is sustained by human connection. I have transitioned from managing tactical, moment-to-moment satellite passes to defining the strategic frameworks that enable them.
-             </p>
-             <p className="mt-4">
-               Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and human decision-making. My expertise lies in optimizing for that signal-to-noise ratio, taking complex concepts in satellite communications or policy and translating them into clear, accessible strategies.
-             </p>
-           </div>
-           <div className={`pl-6 border-l-4 italic ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
-              "From the legacy of NASA human spaceflight to the agile frontiers of commercial space."
-           </div>
-        </div>
-        {/* Right: Animation */}
-        <div className="relative h-[500px]">
-          <div className={`absolute -top-4 -right-4 w-24 h-24 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-          <div className={`absolute -bottom-4 -left-4 w-24 h-24 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-          {/* PASSING isDarkMode PROP HERE */}
-          <SignalToNoise isDarkMode={isDarkMode} />
-          <div className={`text-right text-xs font-mono mt-2 opacity-50 ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
-            Fig 1.0 — acquisition & loss of signal
-          </div>
-        </div>
-      </div>
 
-      {/* MOBILE LAYOUT (Block with Float) */}
-      <div className="md:hidden block clearfix">
-        {/* Header Block (Full Width) */}
-        <div className="mb-6">
-           <span className="font-mono text-[0.65rem] uppercase tracking-[0.3em] opacity-60 block mb-1" style={{ color: accentHex }}>
-             Operations to Regulations
-           </span>
-           <h1 className="text-4xl sm:text-5xl leading-none uppercase break-words" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
-             The <br />
-             <span style={{ color: accentHex }}>Signal</span>
-           </h1>
-        </div>
-
-        {/* Content Container */}
-        <div className="relative">
-          {/* Floated Animation Box */}
-          {/* UPDATED: Increased margins (ml-6, mb-6) and moved Caption INSIDE the floated div */}
-          <div className="float-right w-[50%] h-auto ml-6 mb-6 relative">
-             <div className="h-[200px] relative w-full">
-                <div className={`absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-                <div className={`absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 opacity-50 ${isDarkMode ? 'border-white' : 'border-black'}`} />
-                {/* PASSING isDarkMode PROP HERE */}
-                <SignalToNoise isDarkMode={isDarkMode} />
-             </div>
+           {/* Body Text - Magazine Wrap */}
+           <div className={`text-xs md:text-xl leading-relaxed md:leading-relaxed font-light text-justify ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
+             <p className="mb-3 md:mb-6">
+               <span className="float-left text-2xl md:text-5xl font-bold mr-2 md:mr-3 mt-[-4px] md:mt-[-8px]" style={{ fontFamily: FONTS.body }}>M</span>
+               y career began in the high-pressure environment of Mission Control Center, where I was responsible for the critical "handshake" between the ground system and space vehicle. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
+             </p>
+             <p className="mb-3 md:mb-6">
+              While the space industry is defined by hardware and software, I believe it is sustained by human connection. I have transitioned from moment-to-moment decision making for an upcoming satellite pass to defining the strategic frameworks that enable them.             </p>
+             <p className="mb-3 md:mb-6">
+              Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and regulatory bodies. My expertise lies in optimizing for that signal-to-noise ratio, taking complex concepts in satellite communications or policy and translating them into clear, accessible strategies.             </p>
              
-             {/* Caption moved here - directly inside floated element */}
-             <div className={`text-right text-[0.6rem] font-mono mt-2 opacity-50 leading-tight ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
-                Fig 1.0 — Opposing forces in perfect balance
-             </div>
-          </div>
-
-          {/* Text Wrapping Around */}
-          <div className={`text-sm leading-relaxed font-light ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
-             <p className="first-letter:text-4xl first-letter:font-bold first-letter:mr-2 first-letter:float-left" style={{ fontFamily: FONTS.body }}>
-               My career began in the high-pressure environment of Mission Control, where I was responsible for the critical "handshake" between ground systems and space vehicles. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
-             </p>
-             <p className="mt-4">
-               While the space industry is defined by hardware and software, I believe it is sustained by human connection. I have transitioned from managing tactical, moment-to-moment satellite passes to defining the strategic frameworks that enable them.
-             </p>
-             <p className="mt-4">
-               Currently pursuing spacecraft licensing and spectrum policy, I act as the interface between technical engineering and human decision-making. My expertise lies in optimizing for that signal-to-noise ratio, taking complex concepts in satellite communications or policy and translating them into clear, accessible strategies.
-             </p>
-             <div className={`mt-6 pl-3 border-l-2 italic text-xs ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
+             <div className={`mt-4 md:mt-8 pl-3 border-l-2 italic text-[0.65rem] md:text-base opacity-80 ${isDarkMode ? 'text-stone-400 border-stone-700' : 'text-stone-600 border-stone-300'}`}>
                 "From the legacy of NASA human spaceflight to the agile frontiers of commercial space."
              </div>
-          </div>
+           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   );
 };
