@@ -831,12 +831,7 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
           ctx.fill();
         });
         
-        const centralGlow = Math.sin(time * 0.1) * 0.5 + 0.5;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 2 + centralGlow * 3, 0, Math.PI * 2);
-        const centerColor = isDarkMode ? '200, 200, 200' : '51, 51, 51';
-        ctx.fillStyle = `rgba(${centerColor}, ${0.1 + centralGlow * 0.2})`;
-        ctx.fill();
+        // --- REMOVED: Central dot drawing logic was here ---
       }
     }
     
@@ -848,6 +843,16 @@ const GlowingEyeParticles = ({ isDarkMode, zoomActive }) => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
+  }, [isDarkMode, zoomActive]);
+  
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 -z-10"
+      style={{ display: 'block' }}
+    />
+  );
+};
   }, [isDarkMode, zoomActive]);
   
   return (
@@ -1656,6 +1661,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
