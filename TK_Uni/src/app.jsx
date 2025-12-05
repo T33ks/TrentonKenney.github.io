@@ -7,6 +7,7 @@ import * as THREE from 'three';
 const FONTS = {
   body: "Space Grotesk, sans-serif",
   accent: "Zen Dots, cursive",
+  modern: "'MuseoModerno', sans-serif", // Add this line
 };
 
 // --- Data: Resume (Updated) ---
@@ -427,7 +428,8 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
              <span className="font-mono text-[0.6rem] md:text-xs uppercase tracking-[0.2em] opacity-60 block mb-1" style={{ color: accentHex }}>
                Operations to Regulations
              </span>
-             <h1 className="text-3xl md:text-7xl leading-none uppercase font-bold" style={{ fontFamily: FONTS.accent, color: isDarkMode ? '#fff' : '#000' }}>
+             {/* Updated Font: Uses FONTS.modern */}
+             <h1 className="text-3xl md:text-7xl leading-none uppercase font-bold" style={{ fontFamily: FONTS.modern, color: isDarkMode ? '#fff' : '#000' }}>
                The <br />
                <span style={{ color: accentHex }}>Signal</span>
              </h1>
@@ -436,7 +438,8 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
            {/* Body Text - Magazine Wrap */}
            <div className={`text-xs md:text-xl leading-relaxed md:leading-relaxed font-light text-justify ${isDarkMode ? 'text-stone-300' : 'text-stone-800'}`}>
              <p className="mb-2 md:mb-3">
-               <span className="float-left text-4xl md:text-7xl font-bold mr-2 md:mr-3 mt-[-4px] md:mt-[-8px]" style={{ fontFamily: FONTS.body }}>M</span>
+               {/* Updated Font: Uses FONTS.modern for the drop cap "M" */}
+               <span className="float-left text-4xl md:text-7xl font-bold mr-2 md:mr-3 mt-[-4px] md:mt-[-8px]" style={{ fontFamily: FONTS.modern }}>M</span>
                y career began in the high-pressure environment of a Mission Control Center, where I was responsible for the critical "handshake" between the ground system and space vehicle. That experience taught me a fundamental truth: without a clear signal, you are flying in the dark.
              </p>
              <p className="mb-2 md:mb-3">
@@ -454,7 +457,6 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
     </div>
   );
 };
-
 
 // --- HELPER COMPONENTS ---
 
@@ -1332,7 +1334,7 @@ export default function App() {
 
   useEffect(() => {
     const link = document.createElement('link');
-    link.href = "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Zen+Dots&display=swap";
+    link.href = "https://fonts.googleapis.com/css2?family=MuseoModerno:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;600;700&family=Zen+Dots&display=swap";
     link.rel = "stylesheet";
     document.head.appendChild(link);
   }, []);
@@ -1633,6 +1635,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
