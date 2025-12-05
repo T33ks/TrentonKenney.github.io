@@ -155,14 +155,23 @@ const EXPERIENCES = [
 
 
 
+
 // Theme: Scientific observation of emerging order.
 // Visualization: An analog spectrum analyzer display.
 // Particles represent raw sensor data, visualized with a graticule overlay and dynamic readouts.
-// Updates: Transparent background, Robust Scaling (ResizeObserver), Continuous Scan.
+// Updates: Transparent background, Robust Scaling (ResizeObserver), Continuous Scan, DARK MODE SUPPORT.
 
-const SignalToNoise = () => {
+const SignalToNoise = ({ isDarkMode }) => {
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
+  
+  // Use a ref for theme so the loop can access current state without restarting
+  const themeRef = useRef(isDarkMode);
+
+  // Update theme ref whenever prop changes
+  useEffect(() => {
+    themeRef.current = isDarkMode;
+  }, [isDarkMode]);
   
   // Use refs for mutable state to avoid re-triggering effects on resize
   const stateRef = useRef({
@@ -170,8 +179,7 @@ const SignalToNoise = () => {
     width: 0,
     height: 0,
     scanLineX: 0,
-    time: 0,
-    currentClarity: 0 // Start in "Searching" state (0)
+    time: 0
   });
 
   useEffect(() => {
@@ -249,9 +257,12 @@ const SignalToNoise = () => {
     // Initial resize trigger
     handleResize();
 
-    const drawGrid = (ctx, w, h, clarity) => {
+    const drawGrid = (ctx, w, h, clarity, isDark) => {
       ctx.lineWidth = 1;
-      ctx.strokeStyle = `rgba(0, 0, 0, ${0.05 + clarity * 0.05})`;
+      
+      // Grid Color Logic: Dark mode needs white/light lines, Light mode needs black/dark lines
+      const strokeBase = isDark ? '255, 255, 255' : '0, 0, 0';
+      ctx.strokeStyle = `rgba(${strokeBase}, ${0.05 + clarity * 0.05})`;
       
       const gridSize = 55;
       
@@ -272,15 +283,24 @@ const SignalToNoise = () => {
         ctx.stroke();
       }
       ctx.setLineDash([]); // Reset
+
+      // Center Crosshair
+      ctx.strokeStyle = `rgba(${strokeBase}, 0.2)`;
+      ctx.beginPath();
+      ctx.moveTo(w / 2, h / 2 - 10);
+      ctx.lineTo(w / 2, h / 2 + 10);
+      ctx.moveTo(w / 2 - 10, h / 2);
+      ctx.lineTo(w / 2 + 10, h / 2);
+      ctx.stroke();
     };
 
-    const drawOverlay = (ctx, w, h, clarity, time) => {
+    const drawOverlay = (ctx, w, h, clarity, time, isDark) => {
       ctx.font = '10px "Courier New", monospace';
-      ctx.fillStyle = 'rgba(40, 40, 40, 0.7)';
+      // Text Color Logic
+      ctx.fillStyle = isDark ? 'rgba(200, 200, 200, 0.7)' : 'rgba(40, 40, 40, 0.7)';
       ctx.textAlign = 'left';
 
-      // Use a threshold for the "LOCKED" text so it matches the visual transition
-      const signalLock = clarity > 0.5 ? "LOCKED" : "SEARCHING...";
+      const signalLock = clarity > 0.8 ? "LOCKED" : "SEARCHING...";
 
       ctx.fillText(`STATUS: ${signalLock}`, 20, 30);
 
@@ -292,7 +312,8 @@ const SignalToNoise = () => {
       stateRef.current.scanLineX = (stateRef.current.scanLineX + 1) % w;
       const x = stateRef.current.scanLineX;
       
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+      // Scan Line Color Logic
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, h);
@@ -303,6 +324,7 @@ const SignalToNoise = () => {
       const { width, height } = stateRef.current;
       stateRef.current.time += 0.01;
       const time = stateRef.current.time;
+      const isDark = themeRef.current; // Access current theme
 
       // 1. Trails Effect (Transparent Background Logic)
       ctx.globalCompositeOperation = 'destination-out';
@@ -310,36 +332,17 @@ const SignalToNoise = () => {
       ctx.fillRect(0, 0, width, height);
       ctx.globalCompositeOperation = 'source-over';
 
-      // 2. Calculate "Clarity" State based on Timeline
-      let targetClarity = 0;
-      
-      // Intro: 9s Searching, then 6s Locked
-      if (time < 9) {
-        targetClarity = 0; // Searching
-      } else if (time < 15) { // 9 + 6 = 15
-        targetClarity = 1; // Locked
-      } else {
-        // Loop: Switch every 7 seconds after intro
-        const timeAfterIntro = time - 15;
-        const phase = Math.floor(timeAfterIntro / 7);
-        // Even phases (0, 2, 4...) are Searching, Odd are Locked
-        targetClarity = phase % 2 === 0 ? 0 : 1;
-      }
-
-      // Smoothly interpolate current clarity towards target (Damping)
-      // 0.03 provides a nice analog "needle" delay
-      const diff = targetClarity - stateRef.current.currentClarity;
-      stateRef.current.currentClarity += diff * 0.03;
-      
-      // Apply easing for visual punch
-      const raw = stateRef.current.currentClarity;
-      const clarity = raw * raw * (3 - 2 * raw);
+      // 2. Calculate "Clarity" Cycle
+      const cycle = Math.sin(time * 0.3); 
+      const rawClarity = (cycle + 1) / 2;
+      const clarity = rawClarity * rawClarity * (3 - 2 * rawClarity);
 
       // 3. Draw Grid
-      drawGrid(ctx, width, height, clarity);
+      drawGrid(ctx, width, height, clarity, isDark);
 
       // 4. Update and Draw Particles
-      ctx.fillStyle = '#2A2A2A';
+      // Particle Color Logic
+      ctx.fillStyle = isDark ? '#E6E6E6' : '#2A2A2A';
 
       // Amplitude and margin need to be dynamic based on current height
       const amplitude = height * 0.1;
@@ -376,7 +379,7 @@ const SignalToNoise = () => {
       ctx.globalAlpha = 1.0;
 
       // 5. Draw UI Overlay
-      drawOverlay(ctx, width, height, clarity, time);
+      drawOverlay(ctx, width, height, clarity, time, isDark);
 
       animationRef.current = requestAnimationFrame(draw);
     };
@@ -389,7 +392,7 @@ const SignalToNoise = () => {
       }
       resizeObserver.disconnect();
     };
-  }, []);
+  }, []); // Dependencies empty so setup runs once; theme is accessed via ref
 
   return (
     <div className="flex justify-center items-center h-full w-full">
@@ -402,7 +405,6 @@ const SignalToNoise = () => {
     </div>
   );
 };
-
 
 
 // --- NEW COMPONENT: IntroductionSection ---
@@ -1675,4 +1677,3 @@ export default function App() {
     </div>
   );
 }
-
