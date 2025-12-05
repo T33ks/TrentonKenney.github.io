@@ -461,22 +461,46 @@ const IntroductionSection = ({ isDarkMode, accentHex }) => {
 
 // --- HELPER COMPONENTS ---
 
-const DescriptionRenderer = ({ text, isDarkMode, accentHex }) => {
+const DescriptionRenderer = ({ text, isDarkMode, accentHex, children }) => {
   if (!text) return null;
+  
+  const textColor = isDarkMode ? 'text-stone-300' : 'text-stone-600';
+
+  // LIST MODE
   if (text.includes('•')) {
     const items = text.split('•').map(item => item.trim()).filter(item => item.length > 0);
     return (
-      <ul className="list-none space-y-2 mb-6">
-        {items.map((item, index) => (
-          <li key={index} className={`flex items-start leading-relaxed ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>
-            <span className="mr-3 mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0 opacity-80" style={{ backgroundColor: accentHex }} />
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
+      <div className="mb-6">
+        <ul className="list-none space-y-2">
+          {items.map((item, index) => (
+            <li key={index} className={`flex items-start leading-relaxed ${textColor}`}>
+              <span className="mr-3 mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0 opacity-80" style={{ backgroundColor: accentHex }} />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+        {/* Chevron placed at the bottom-right of the list */}
+        {children && (
+           <div className="flex justify-end mt-2">
+             {children}
+           </div>
+        )}
+      </div>
     );
   }
-  return <p className={`mb-6 leading-relaxed ${isDarkMode ? 'text-stone-300' : 'text-stone-600'}`}>{text}</p>;
+  
+  // PARAGRAPH MODE
+  return (
+    <p className={`mb-6 leading-relaxed ${textColor}`}>
+        {text}
+        {/* Chevron placed inline at the end of the text */}
+        {children && (
+           <span className="inline-block ml-2 align-middle">
+             {children}
+           </span>
+        )}
+    </p>
+  );
 };
 
 const SkillJewel = ({ skill, isDarkMode }) => {
@@ -534,7 +558,7 @@ const ExperienceItem = ({
         `}
         onMouseEnter={() => onHoverChange(job.id)}
         onMouseLeave={() => onHoverChange(null)}
-        onClick={() => onHoverChange(job.id)} // Ensures tap on mobile registers as interaction
+        onClick={() => onHoverChange(job.id)} 
       >
         {/* Header */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4 gap-2">
@@ -546,15 +570,19 @@ const ExperienceItem = ({
             <div className={`font-mono text-sm ${isDarkMode ? 'text-stone-500' : 'text-stone-400'}`}>
               {job.period}
             </div>
-            {/* Toggle Button */}
+            {/* CHEVRON REMOVED FROM HERE */}
+          </div>
+        </div>
+
+        {/* Content with Embedded Chevron */}
+        <DescriptionRenderer text={job.description} isDarkMode={isDarkMode} accentHex={accentHex}>
             {hasExpandableContent && (
               <motion.button
                 onClick={(e) => {
-                   e.stopPropagation(); // Prevent double triggering if container also has click logic
+                   e.stopPropagation(); 
                    onToggle(job.id);
                 }}
-                className={`p-1 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/10 text-stone-400' : 'hover:bg-black/5 text-stone-500'}`}
-                // Only animate if collapsed AND hovered
+                className={`p-1 rounded-full transition-colors align-middle ${isDarkMode ? 'hover:bg-white/10 text-stone-400' : 'hover:bg-black/5 text-stone-500'}`}
                 animate={(!isExpanded && isHovered) ? {
                   boxShadow: [
                     `0 0 0px ${isDarkMode ? 'rgba(242, 211, 153, 0)' : 'rgba(64, 56, 42, 0)'}`,
@@ -564,7 +592,6 @@ const ExperienceItem = ({
                 } : {
                   boxShadow: '0 0 0px rgba(0,0,0,0)'
                 }}
-                // Conditional transition: fast exit (0.1s) when not hovered, slow loop (2s) when hovered
                 transition={(!isExpanded && isHovered) ? { 
                   duration: 2, 
                   repeat: Infinity, 
@@ -576,11 +603,7 @@ const ExperienceItem = ({
                 {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
               </motion.button>
             )}
-          </div>
-        </div>
-
-        {/* Content */}
-        <DescriptionRenderer text={job.description} isDarkMode={isDarkMode} accentHex={accentHex} />
+        </DescriptionRenderer>
 
         <div className="flex flex-wrap gap-2 mb-4">
           {job.skills.map((skill, idx) => (
@@ -600,17 +623,14 @@ const ExperienceItem = ({
             >
               <div className={`relative mt-6 pt-6 border-t ${isDarkMode ? 'border-stone-800' : 'border-stone-200'}`}>
                 
-                {/* 1. Show simple expanded content (bullets) if available */}
                 {job.expandedContent && (
                    <div className="pl-2">
                       <DescriptionRenderer text={job.expandedContent} isDarkMode={isDarkMode} accentHex={accentHex} />
                    </div>
                 )}
 
-                {/* 2. Show nested sub-experiences if available */}
                 {job.subExperiences && (
                   <>
-                    {/* Nested Timeline Line */}
                     <div className={`absolute left-1.5 top-10 bottom-6 w-0.5 ${isDarkMode ? 'bg-stone-800' : 'bg-stone-300'} opacity-50`} />
 
                     {job.subExperiences.map((subJob) => (
@@ -1636,6 +1656,7 @@ export default function App() {
     </div>
   );
 }
+
 
 
 
